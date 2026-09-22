@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>工友智能体搭建计划 v2 — 安卓端 + 法律 Skill + shujuku 记忆</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#FBF8F4;--bg2:#F0ECE5;--ink:#2C2416;--muted:#8B7355;--rule:#D4C8B5;--accent:#E8751A;--accent2:#2E7D6F;--danger:#C0392B;--success:#27AE60;--change:#A32D2D}
+body{font-family:'Noto Sans SC','Microsoft YaHei',sans-serif;font-size:15px;line-height:1.7;color:var(--ink);background:var(--bg)}
+.container{max-width:880px;margin:0 auto;padding:0 2rem}
+.cover{background:linear-gradient(160deg,#2C2416 0%,#4A3728 40%,#3D2B1F 70%,#2C2416 100%);color:#FBF8F4;padding:4rem 2rem 3rem;text-align:center}
+.cover .badge{display:inline-block;background:rgba(232,117,26,.2);border:1px solid rgba(232,117,26,.4);color:#E8751A;font-size:.8rem;font-weight:600;letter-spacing:.1em;padding:.35rem 1.2rem;border-radius:50px;margin-bottom:1.5rem}
+.cover h1{font-size:2.2rem;font-weight:700;margin-bottom:.8rem}
+.cover h1 span{color:#E8751A}
+.cover .subtitle{font-size:1rem;color:rgba(251,248,244,.7);margin-bottom:1.5rem}
+.cover .vtag{display:inline-block;background:rgba(192,57,43,.3);border:1px solid rgba(192,57,43,.5);color:#E07866;font-size:.75rem;padding:.2rem .8rem;border-radius:4px;margin:.2rem}
+main{padding:2.5rem 0}
+section{margin-bottom:3rem}
+h2{font-size:1.4rem;font-weight:700;color:var(--ink);margin-bottom:1rem;padding-bottom:.4rem;border-bottom:3px solid var(--accent);display:inline-block}
+h3{font-size:1.1rem;font-weight:700;margin:1.5rem 0 .6rem}
+h4{font-size:.95rem;font-weight:700;color:var(--accent2);margin:1rem 0 .4rem}
+p{margin-bottom:.8rem}
+strong{font-weight:700}
+.card{background:var(--bg2);border-radius:8px;padding:1.2rem 1.4rem;margin:1rem 0;border:1px solid var(--rule)}
+.card.accent-left{border-left:4px solid var(--accent)}
+.card.accent2-left{border-left:4px solid var(--accent2)}
+.card.change-left{border-left:4px solid var(--danger)}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+thead th{background:var(--accent);color:#FFF;padding:.6rem .8rem;text-align:left;font-weight:600;font-size:.82rem}
+tbody td{padding:.6rem .8rem;border-bottom:1px solid var(--rule);vertical-align:top}
+tbody tr:nth-child(even){background:var(--bg2)}
+td.match{font-weight:700;color:var(--success)}
+td.partial{font-weight:700;color:var(--accent)}
+td.change{color:var(--danger);font-weight:600}
+.callout{padding:1rem 1.2rem;border-radius:8px;margin:1rem 0;font-size:.92rem}
+.callout.tip{background:rgba(46,125,111,.08);border-left:4px solid var(--accent2)}
+.callout.warn{background:rgba(232,117,26,.08);border-left:4px solid var(--accent)}
+.callout.danger{background:rgba(192,57,43,.07);border-left:4px solid var(--danger)}
+.callout strong{display:block;margin-bottom:.3rem}
+ul,ol{margin:.5rem 0 .8rem 1.3rem}
+li{margin-bottom:.3rem}
+.tag{display:inline-block;padding:.15rem .6rem;font-size:.75rem;font-weight:600;border-radius:4px;margin:.1rem .2rem}
+.tag.orange{background:rgba(232,117,26,.12);color:var(--accent)}
+.tag.green{background:rgba(46,125,111,.12);color:var(--accent2)}
+.tag.red{background:rgba(192,57,43,.12);color:var(--danger)}
+.tag.blue{background:rgba(24,95,165,.12);color:#185FA5}
+.tag.gray{background:rgba(139,115,85,.1);color:var(--muted)}
+.phase{display:flex;align-items:flex-start;gap:1rem;margin:1.2rem 0;padding:1rem;background:var(--bg2);border-radius:8px;border:1px solid var(--rule)}
+.phase-num{flex-shrink:0;width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#FFF;font-size:.9rem}
+.phase-body{flex:1}
+.phase-body h4{margin:0 0 .3rem;color:var(--ink)}
+.phase-body .deliver{font-size:.82rem;color:var(--muted);margin-top:.3rem}
+.phase.changed{border:2px solid var(--danger)}
+.p0 .phase-num{background:#534AB7}
+.p1 .phase-num{background:#0F6E56}
+.p2 .phase-num{background:#854F0B}
+.p3 .phase-num{background:#185FA5}
+.p4 .phase-num{background:#993556}
+.p5 .phase-num{background:#3B6D11}
+.p6 .phase-num{background:#A32D2D}
+.p7 .phase-num{background:#534AB7}
+.diff-old{text-decoration:line-through;color:var(--muted)}
+.diff-new{color:var(--danger);font-weight:600}
+@media(max-width:768px){.container{padding:0 1rem}.cover h1{font-size:1.6rem}.phase{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <div class="badge">Coze Build Plan v2</div>
+  <h1>工友权益智能体<br><span>搭建计划 v2</span></h1>
+  <p class="subtitle">基于用户反馈的三项关键变更</p>
+  <div>
+    <span class="vtag">安卓客户端</span>
+    <span class="vtag">法律 Skill 替代 RAG</span>
+    <span class="vtag">shujuku 长期记忆</span>
+  </div>
+</header>
+
+<main class="container">
+
+<!-- ====== Section 0: 变更摘要 ====== -->
+<section>
+  <h2>零、变更摘要</h2>
+  <p>根据你的反馈，计划有以下三项关键变更：</p>
+
+  <div class="card change-left">
+    <h4 style="margin-top:0;color:var(--danger)">变更一：客户端改为安卓端</h4>
+    <p><span class="diff-old">原方案：发布为 Coze Web 链接，评委浏览器体验</span></p>
+    <p><span class="diff-new">新方案：开发安卓端客户端，基于你提供的 index.html 原型（4 屏交互：首页/权益咨询/暖心树洞/便民工具）封装为安卓应用</span></p>
+    <ul>
+      <li>原型已有完整的 UI 设计：语音入口卡片、气泡对话、法条引用卡片、转接卡片、心情选择器、底部语音输入栏</li>
+      <li>技术路线建议：<strong>WebView 封装</strong>（最快，直接嵌入你的 HTML）→ 后续可升级 React Native / Flutter</li>
+      <li>语音能力：调用安卓系统麦克风做 ASR 录音，通过 Coze API 传入</li>
+      <li>与 Coze 后端通信：HTTP 调用 Coze 的 chat completion API</li>
+    </ul>
+  </div>
+
+  <div class="card change-left">
+    <h4 style="margin-top:0;color:var(--danger)">变更二：P2 知识库 → 法律 Skill 替代</h4>
+    <p><span class="diff-old">原方案：自建 RAG 知识库（收集劳动法 PDF → 分段 → 向量化 → 检索）</span></p>
+    <p><span class="diff-new">新方案：使用 WorkBuddy 推荐市场的法律 Skill 替代，免去数据收集/分段/向量化全部工作</span></p>
+    <p>已搜索到两个高度匹配的候选 Skill：</p>
+    <table>
+      <thead>
+        <tr><th>Skill</th><th>核心能力</th><th>适配度</th><th>推荐</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>fadada-laws-and-regulations-retrieval</strong><br>法大大法规检索</td>
+          <td>检索中国大陆法律法规、行政法规、地方性法规、司法解释及<strong>条文内容</strong>。支持"查法条""找法规""这条法律怎么说"等自然语言触发</td>
+          <td class="match">极高</td>
+          <td><span class="tag green">首选</span></td>
+        </tr>
+        <tr>
+          <td><strong>fazhi-law</strong><br>法治法律专家</td>
+          <td>调用 2 亿+权威法律数据，融入资深律师执业心得，覆盖民商事、刑事、行政、执行等<strong>全部法律事由</strong></td>
+          <td class="match">极高</td>
+          <td><span class="tag green">推荐组合</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <p><strong>建议组合使用</strong>：fadada 负责条文级精确检索（"《保障农民工工资支付条例》第三十条"），fazhi-law 负责整体法律推理和通俗化解释。两者可覆盖你方案中劳动法/工伤/工资拖欠/社保/加班结算的全部需求。</p>
+    <p><strong>核心优势</strong>：无需自建知识库 → P2 阶段从"收集+分段+向量化"简化为"安装+配置 Skill"，节省大量时间，且数据权威性更高（2 亿+权威数据 vs 自己收集的 PDF）。</p>
+  </div>
+
+  <div class="card change-left">
+    <h4 style="margin-top:0;color:var(--danger)">变更三：长期记忆采用 shujuku 方案</h4>
+    <p><span class="diff-old">原方案：Coze Memory 变量 + Database 简单建表</span></p>
+    <p><span class="diff-new">新方案：参考 AlbusKen/shujuku 仓库的"神·数据库"方案，引入结构化长期记忆体系</span></p>
+    <p>shujuku 仓库提供了完整的长期记忆管理架构，我们提取可落地的核心机制：</p>
+    <table>
+      <thead>
+        <tr><th>shujuku 机制</th><th>在工友智能体中的应用</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>聊天持久化</strong><br>表格数据写入聊天历史，自动恢复</td>
+          <td>工友的档案信息（工种/入职日期/历史咨询摘要）持久化到对话历史，重启不丢失</td>
+        </tr>
+        <tr>
+          <td><strong>SQL 查询 API</strong><br>SQLite 模式下的只读 SQL 查询</td>
+          <td>支持"这个工友上次问过什么""有多少人反映过食堂问题"等结构化查询</td>
+        </tr>
+        <tr>
+          <td><strong>世界书注入</strong><br>结构化数据注入 AI 上下文</td>
+          <td>工友档案自动注入对话上下文，AI 能"记住"工友背景（如"你是钢筋工，入职 3 个月"）</td>
+        </tr>
+        <tr>
+          <td><strong>callAI 受限代理</strong><br>安全调用 AI 做摘要/分析</td>
+          <td>每轮对话结束后，自动摘要写入工友档案表</td>
+        </tr>
+        <tr>
+          <td><strong>getStoryContext</strong><br>提取对话上下文</td>
+          <td>多轮追问时获取前 N 轮上下文，支持"先说欠薪再补充三个月"的连续对话</td>
+        </tr>
+        <tr>
+          <td><strong>数据隔离</strong><br>按聊天+标识分槽存储</td>
+          <td>不同工友的档案隔离，不会串数据</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout warn">
+      <strong>适配说明</strong>
+      shujuku 原为 SillyTavern 生态设计，我们的 Coze 环境不会直接使用其插件。但我们会<strong>借鉴其架构理念</strong>，在 Coze 的 Database + Memory + Workflow 中实现等效的长期记忆机制。核心是：结构化存储 → 上下文注入 → 多轮记忆 → 自动摘要写入。
+    </div>
+  </div>
+</section>
+
+<!-- ====== Section 1: 更新后的搭建阶段 ====== -->
+<section>
+  <h2>一、更新后的搭建阶段（7 阶段）</h2>
+  <p>标红边框的阶段为有变更的阶段。</p>
+
+  <div class="phase p0">
+    <div class="phase-num">P0</div>
+    <div class="phase-body">
+      <h4>账号注册 & Bot 创建</h4>
+      <p>注册 Coze 账号，创建 Bot，选定大模型。<strong>同时安装法律 Skill。</strong></p>
+      <ul>
+        <li>注册 coze.cn 账号</li>
+        <li>创建 Bot，模型选 GLM-4 或豆包</li>
+        <li><span class="diff-new">在 WorkBuddy 中安装 fadada 法规检索 + fazhi-law 两个法律 Skill</span></li>
+      </ul>
+      <p class="deliver"><strong>预期产出：</strong>空壳 Bot + 法律 Skill 就绪。</p>
+    </div>
+  </div>
+
+  <div class="phase p1">
+    <div class="phase-num">P1</div>
+    <div class="phase-body">
+      <h4>Bot 人设 & Prompt 设计</h4>
+      <p>编写工友管家人设、通俗化翻译指令、安全边界规则。无变更。</p>
+      <p class="deliver"><strong>预期产出：</strong>能对话的基础 Bot。</p>
+    </div>
+  </div>
+
+  <div class="phase p2 changed">
+    <div class="phase-num">P2</div>
+    <div class="phase-body">
+      <h4 style="color:var(--danger)">P2（变更）：法律 Skill 配置替代自建 RAG</h4>
+      <p><span class="diff-old">旧 P2：收集劳动法 PDF → 上传 Coze 知识库 → 分段 → 向量化</span></p>
+      <p><span class="diff-new">新 P2：配置已安装的法律 Skill，使其可被 Bot 调用</span></p>
+      <ul>
+        <li>在 Coze Bot 中配置 Plugin/Skill 调用节点</li>
+        <li>将 fadada 法规检索配置为权益咨询工作流的检索后端</li>
+        <li>将 fazhi-law 配置为法律推理和通俗化解释引擎</li>
+        <li>测试：输入"老板不发工资怎么办"，验证 Skill 返回真实法条</li>
+        <li>配置引用标注：回复中自动附带条文来源</li>
+      </ul>
+      <p class="deliver"><strong>预期产出：</strong>Bot 能基于 2 亿+权威法律数据回答问题，并标注引用来源。<strong>省去全部数据收集和向量化工作。</strong></p>
+    </div>
+  </div>
+
+  <div class="phase p3">
+    <div class="phase-num">P3</div>
+    <div class="phase-body">
+      <h4>Workflow 工作流编排</h4>
+      <p>意图路由 → 权益咨询（调用法律 Skill）→ 心理陪伴 → 便民工具 → 安全阈值 → 转接。无变更。</p>
+      <p class="deliver"><strong>预期产出：</strong>三路分流跑通。</p>
+    </div>
+  </div>
+
+  <div class="phase p4">
+    <div class="phase-num">P4</div>
+    <div class="phase-body">
+      <h4>语音 & 插件交互模块</h4>
+      <p>ASR/TTS/OCR 插件配置。无变更。</p>
+      <p class="deliver"><strong>预期产出：</strong>语音+图片可交互。</p>
+    </div>
+  </div>
+
+  <div class="phase p5 changed">
+    <div class="phase-num">P5</div>
+    <div class="phase-body">
+      <h4 style="color:var(--danger)">P5（变更）：shujuku 理念长期记忆</h4>
+      <p><span class="diff-old">旧 P5：Coze Memory 变量 + 简单 Database 建表</span></p>
+      <p><span class="diff-new">新 P5：借鉴 shujuku 架构，实现结构化长期记忆体系</span></p>
+      <ul>
+        <li><strong>工友档案表</strong>（对应 shujuku 表格数据）：字段 user_id / 工种 / 入职日期 / 历史咨询摘要 / 紧急联系人</li>
+        <li><strong>工单记录表</strong>：字段 工单ID / user_id / 问题类型 / AI回复 / 是否转接 / 时间戳</li>
+        <li><strong>聊天持久化</strong>（对应 shujuku 机制）：档案信息写入对话历史，重启自动恢复</li>
+        <li><strong>上下文注入</strong>（对应 shujuku 世界书注入）：工友档案自动注入对话上下文，AI"知道"工友是谁</li>
+        <li><strong>自动摘要写入</strong>（对应 shujuku callAI）：每轮对话结束后，用 LLM 摘要写入档案表</li>
+        <li><strong>多轮记忆</strong>（对应 shujuku getStoryContext）：获取前 N 轮上下文，支持连续追问</li>
+      </ul>
+      <p class="deliver"><strong>预期产出：</strong>Bot 记住工友背景，支持多轮追问，档案持久化不丢失。</p>
+    </div>
+  </div>
+
+  <div class="phase p6 changed">
+    <div class="phase-num">P6</div>
+    <div class="phase-body">
+      <h4 style="color:var(--danger)">P6（变更）：安卓客户端开发 & 发布</h4>
+      <p><span class="diff-old">旧 P6：发布为 Coze Web 链接</span></p>
+      <p><span class="diff-new">新 P6：基于 index.html 原型开发安卓客户端</span></p>
+      <ul>
+        <li><strong>WebView 封装</strong>：将你的 index.html 原型封装为安卓应用，4 屏交互完整保留</li>
+        <li><strong>语音能力</strong>：调用安卓系统麦克风录音 → 上传 Coze ASR → 获取文字</li>
+        <li><strong>API 对接</strong>：安卓端通过 HTTP 调用 Coze chat completion API</li>
+        <li><strong>UI 适配</strong>：保留原型的语音入口卡片、气泡对话、法条引用卡片、转接卡片、心情选择器</li>
+        <li><strong>端到端测试</strong>：模拟工友全流程——语音咨询欠薪 → AI 回答 → 转接</li>
+        <li><strong>Prompt 调优</strong>：反复测试法律幻觉问题</li>
+      </ul>
+      <p class="deliver"><strong>预期产出：</strong>可安装的安卓 APK + 可提交给评委的体验包。</p>
+    </div>
+  </div>
+
+  <div class="callout tip">
+    <strong>P2 变更的巨大价值</strong>
+    原 P2 需要收集法规 PDF、分段、向量化、测试检索——估计需要 2-3 天。用法律 Skill 替代后，P2 简化为安装 Skill + 配置调用节点，<strong>可缩短至半天</strong>。而且 Skill 背后的 2 亿+权威法律数据覆盖面远超自己能收集的内容，权威性更高，幻觉风险更低。
+  </div>
+</section>
+
+<!-- ====== Section 2: 安卓客户端方案 ====== -->
+<section>
+  <h2>二、安卓客户端方案详解</h2>
+  <p>你的 index.html 原型已经是一个完整的 4 屏交互设计，直接封装为安卓应用是最快路径。</p>
+
+  <h3>2.1 技术路线对比</h3>
+  <table>
+    <thead>
+      <tr><th>方案</th><th>开发周期</th><th>优点</th><th>缺点</th><th>推荐</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>WebView 封装</strong></td>
+        <td>1-2 天</td>
+        <td>直接复用你的 HTML 原型，零重构</td>
+        <td>性能略低于原生</td>
+        <td class="match"><span class="tag green">首选（MVP）</span></td>
+      </tr>
+      <tr>
+        <td>React Native</td>
+        <td>5-7 天</td>
+        <td>接近原生性能，可扩展</td>
+        <td>需重写 UI 组件</td>
+        <td><span class="tag gray">后续升级</span></td>
+      </tr>
+      <tr>
+        <td>Flutter</td>
+        <td>5-7 天</td>
+        <td>高性能，跨平台</td>
+        <td>需重写 UI，Dart 学习成本</td>
+        <td><span class="tag gray">后续升级</span></td>
+      </tr>
+      <tr>
+        <td>原生 Kotlin/Java</td>
+        <td>7-10 天</td>
+        <td>最佳性能和系统集成</td>
+        <td>开发周期最长</td>
+        <td><span class="tag gray">不推荐 MVP</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout tip">
+    <strong>推荐：WebView 封装</strong>
+    你的 HTML 原型已有完整的状态管理（navigateTo/toggleRecording/selectMood）、4 屏切换、语音按钮动画。用安卓 WebView 封装只需：(1) 创建安卓工程 (2) 放入 HTML 到 assets (3) 配置 WebView (4) 添加麦克风权限 (5) 对接 Coze API。这是截止日期前最快落地的方式。
+  </div>
+
+  <h3>2.2 原型 4 屏与 Coze 后端的对接</h3>
+  <table>
+    <thead>
+      <tr><th>原型页面</th><th>UI 元素</th><th>对接 Coze 后端</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>首页</strong></td>
+        <td>语音入口卡片（按住说话）、4 个快捷入口、底部 Tab</td>
+        <td>语音 → Coze ASR → 意图路由 → 跳转对应页</td>
+      </tr>
+      <tr>
+        <td><strong>权益咨询页</strong></td>
+        <td>用户气泡 + AI 气泡 + 法条引用卡片 + 转接卡片 + 底部语音栏</td>
+        <td>文字 → Coze chat API → 法律 Skill 检索 → 返回含法条卡片</td>
+      </tr>
+      <tr>
+        <td><strong>暖心树洞页</strong></td>
+        <td>心情选择器 + 用户气泡 + AI 暖心回复 + 底部语音栏</td>
+        <td>文字 → Coze chat API → 心理陪伴工作流 → 暖心回复</td>
+      </tr>
+      <tr>
+        <td><strong>便民工具页</strong></td>
+        <td>报修/食堂/班车/安全微课卡片 + 班车信息卡片</td>
+        <td>点击 → Coze 对应 Workflow → 返回结果卡片</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>2.3 安卓端核心功能实现</h3>
+  <div class="card accent-left">
+    <h4 style="margin-top:0">语音输入实现</h4>
+    <ol>
+      <li>安卓端录音：MediaRecorder 录制音频文件</li>
+      <li>上传 Coze：通过 multipart/form-data 上传到 Coze ASR 接口</li>
+      <li>获取文字：ASR 返回识别文本</li>
+      <li>发送对话：文本传入 Coze chat completion API</li>
+      <li>语音播报：Coze TTS 返回音频 → MediaPlayer 播放</li>
+    </ol>
+  </div>
+  <div class="card accent-left">
+    <h4 style="margin-top:0">图片上传实现</h4>
+    <ol>
+      <li>安卓端拍照/选图：调用系统相机或相册</li>
+      <li>上传 Coze：multipart 上传图片</li>
+      <li>OCR 识别：Coze 多模态插件识别工资条/合同</li>
+      <li>结果传入对话：识别文本进入对话流</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ====== Section 3: 法律 Skill 对比 ====== -->
+<section>
+  <h2>三、法律 Skill 能否替代 P2 自建 RAG？</h2>
+  <p style="font-size:1.1rem;font-weight:700;color:var(--success)">结论：可以，且强烈推荐替代。</p>
+
+  <table>
+    <thead>
+      <tr><th>对比维度</th><th>自建 RAG 知识库（旧 P2）</th><th>法律 Skill（新 P2）</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>数据覆盖</strong></td>
+        <td>仅限自己收集的 PDF（可能遗漏</td>
+        <td class="match">2 亿+权威法律数据，覆盖全部法律事由</td>
+      </tr>
+      <tr>
+        <td><strong>条文检索</strong></td>
+        <td>向量检索，可能有偏差</td>
+        <td class="match">条文级精确检索，支持自然语言查询</td>
+      </tr>
+      <tr>
+        <td><strong>数据权威性</strong></td>
+        <td>取决于收集来源</td>
+        <td class="match">权威法律数据库，官方来源</td>
+      </tr>
+      <tr>
+        <td><strong>搭建时间</strong></td>
+        <td>2-3 天（收集+分段+向量化+调试）</td>
+        <td class="match">半天（安装+配置调用节点）</td>
+      </tr>
+      <tr>
+        <td><strong>维护成本</strong></td>
+        <td>法规更新需手动同步</td>
+        <td class="match">Skill 维护方更新，自动同步</td>
+      </tr>
+      <tr>
+        <td><strong>幻觉风险</strong></td>
+        <td>中（检索不到时可能编造）</td>
+        <td class="match">低（权威数据 + 标注引用来源）</td>
+      </tr>
+      <tr>
+        <td><strong>通俗化翻译</strong></td>
+        <td>需自己在 Prompt 中实现</td>
+        <td class="match">fazhi-law 内含"资深律师执业心得"，可通俗化</td>
+      </tr>
+      <tr>
+        <td><strong>比赛呈现</strong></td>
+        <td>"自建知识库"是一个技术亮点</td>
+        <td class="partial">"整合专业法律 Skill"是工具整合能力体现</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout warn">
+    <strong>比赛策略提示</strong>
+    方案文档中提到评审看重"工具整合"能力。使用法律 Skill 恰恰展示了你整合专业工具的能力——这比自建一个覆盖不全的 RAG 库更能体现"AI 协同"思维。在文档中可以这么写："本方案未重复造轮子，而是整合 fadada 法规检索和 fazhi-law 两个专业法律 Skill，实现 2 亿+权威法律数据的即时接入，体现了人机协同中的工具整合能力。"
+  </div>
+
+  <div class="callout danger">
+    <strong>唯一注意点</strong>
+    法律 Skill 是 WorkBuddy 平台的 Skill。如果最终需要在 Coze 平台上运行，需要确认：(1) Coze 是否支持调用外部 Skill，或 (2) 是否需要在 Coze 中配置等效的插件（Plugin）。如果 Coze 不支持直接调用 WorkBuddy Skill，我们有两个备选方案：A. 在 Coze 插件市场找等效法律插件；B. 用 Coze 自定义插件封装 Skill 的 API 调用。这一点需要在 P0 阶段验证。
+  </div>
+</section>
+
+<!-- ====== Section 4: shujuku 记忆方案 ====== -->
+<section>
+  <h2>四、shujuku 长期记忆方案落地</h2>
+  <p>shujuku 仓库的"神·数据库"提供了完整的长期记忆架构。我们借鉴其核心理念，在 Coze 环境中实现等效机制。</p>
+
+  <h3>4.1 shujuku 核心机制 → Coze 落地映射</h3>
+  <table>
+    <thead>
+      <tr><th>shujuku 机制</th><th>原始实现</th><th>Coze 对应落地</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>表格数据持久化</strong></td>
+        <td>importTableAsJson 写入聊天历史</td>
+        <td>Coze Database 数据表 + 工单写入</td>
+      </tr>
+      <tr>
+        <td><strong>运行时恢复</strong></td>
+        <td>restoreTableAsJson 恢复不持久化</td>
+        <td>Coze Memory 变量（会话级）</td>
+      </tr>
+      <tr>
+        <td><strong>SQL 查询</strong></td>
+        <td>executeSqlQuery / queryTableRows</td>
+        <td>Coze Database 查询节点</td>
+      </tr>
+      <tr>
+        <td><strong>世界书注入</strong></td>
+        <td>syncWorldbookEntries 注入上下文</td>
+        <td>Coze Memory 变量注入 Prompt</td>
+      </tr>
+      <tr>
+        <td><strong>callAI 摘要</strong></td>
+        <td>受限代理调用 AI 做摘要</td>
+        <td>Coze Workflow 末尾加 LLM 摘要节点</td>
+      </tr>
+      <tr>
+        <td><strong>getStoryContext</strong></td>
+        <td>提取前 N 轮 AI 回复</td>
+        <td>Coze Memory 配置保留 N 轮历史</td>
+      </tr>
+      <tr>
+        <td><strong>数据隔离</strong></td>
+        <td>按聊天+标识分槽</td>
+        <td>Coze Database 按 user_id 隔离</td>
+      </tr>
+      <tr>
+        <td><strong>回调注册</strong></td>
+        <td>表格更新回调</td>
+        <td>Coze Workflow 后置节点触发</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>4.2 工友档案表结构（借鉴 shujuku 表格设计）</h3>
+  <div class="card accent2-left">
+    <h4 style="margin-top:0">表：worker_profile（工友档案）</h4>
+    <table>
+      <thead><tr><th>字段</th><th>类型</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>user_id</td><td>STRING</td><td>用户唯一标识（安卓设备ID或手机号）</td></tr>
+        <tr><td>nickname</td><td>STRING</td><td>工友称呼</td></tr>
+        <tr><td>trade</td><td>STRING</td><td>工种（钢筋工/木工/泥瓦工等）</td></tr>
+        <tr><td>entry_date</td><td>DATE</td><td>入职日期</td></tr>
+        <tr><td>project_site</td><td>STRING</td><td>所在项目工地</td></tr>
+        <tr><td>consult_history</td><td>TEXT</td><td>历史咨询摘要（自动生成）</td></tr>
+        <tr><td>emergency_contact</td><td>STRING</td><td>紧急联系人</td></tr>
+        <tr><td>mood_trend</td><td>STRING</td><td>情绪趋势（正常/需关注/高危）</td></tr>
+        <tr><td>last_update</td><td>DATETIME</td><td>最后更新时间</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card accent2-left">
+    <h4 style="margin-top:0">表：work_order（工单记录）</h4>
+    <table>
+      <thead><tr><th>字段</th><th>类型</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>order_id</td><td>STRING</td><td>工单唯一ID</td></tr>
+        <tr><td>user_id</td><td>STRING</td><td>关联工友</td></tr>
+        <tr><td>category</td><td>STRING</td><td>问题类型（权益/心理/便民）</td></tr>
+        <tr><td>question</td><td>TEXT</td><td>用户问题原文</td></tr>
+        <tr><td>ai_reply</td><td>TEXT</td><td>AI回复摘要</td></tr>
+        <tr><td>law_ref</td><td>TEXT</td><td>引用法条（如有）</td></tr>
+        <tr><td>transferred</td><td>BOOL</td><td>是否转接人工</td></tr>
+        <tr><td>transfer_target</td><td>STRING</td><td>转接目标（HR/法务/心理热线）</td></tr>
+        <tr><td>created_at</td><td>DATETIME</td><td>记录时间</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>4.3 记忆流转流程（借鉴 shujuku 完整链路）</h3>
+  <div class="card accent-left">
+    <ol style="margin-top:0">
+      <li><strong>对话开始</strong>：从 Database 查询工友档案 → 注入 Prompt 上下文（对应 shujuku 世界书注入）</li>
+      <li><strong>对话进行</strong>：Memory 变量保留当前会话 N 轮历史（对应 shujuku getStoryContext）</li>
+      <li><strong>对话结束</strong>：Workflow 末尾 LLM 节点生成本轮摘要（对应 shujuku callAI）</li>
+      <li><strong>持久化</strong>：摘要写入工友档案表 + 工单记录写入工单表（对应 shujuku 聊天持久化）</li>
+      <li><strong>下次对话</strong>：恢复档案 → 注入 → AI"记得"工友是谁、上次问了什么</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ====== Section 5: 更新后的依赖关系 ====== -->
+<section>
+  <h2>五、更新后的搭建顺序与依赖</h2>
+
+  <div class="callout warn">
+    <strong>更新后依赖链</strong>
+    P0（账号+Bot+安装Skill）→ P1（人设Prompt）→ P2（配置法律Skill）→ P3（工作流）→ P4（语音插件）→ P5（shujuku记忆）→ P6（安卓客户端）
+  </div>
+
+  <table>
+    <thead>
+      <tr><th>阶段</th><th>前置依赖</th><th>变更</th><th>预计耗时</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>P0</strong></td><td>无</td><td><span class="tag red">新增：安装法律 Skill</span></td><td>0.5 天</td></tr>
+      <tr><td><strong>P1</strong></td><td>P0</td><td>无变更</td><td>0.5 天</td></tr>
+      <tr><td><strong>P2</strong></td><td>P0</td><td><span class="tag red">变更：配置 Skill 替代 RAG</span></td><td><strong>0.5 天（原 2-3 天）</strong></td></tr>
+      <tr><td><strong>P3</strong></td><td>P1+P2</td><td>无变更</td><td>1-2 天</td></tr>
+      <tr><td><strong>P4</strong></td><td>P3</td><td>无变更</td><td>0.5 天</td></tr>
+      <tr><td><strong>P5</strong></td><td>P3</td><td><span class="tag red">变更：shujuku 记忆方案</span></td><td>1 天</td></tr>
+      <tr><td><strong>P6</strong></td><td>P0-P5</td><td><span class="tag red">变更：安卓客户端开发</span></td><td>1-2 天</td></tr>
+    </tbody>
+  </table>
+
+  <div class="card accent2-left">
+    <h4 style="margin-top:0">总工期估算</h4>
+    <p>更新后总工期：<strong>约 5-7 天</strong>（原方案约 7-10 天）</p>
+    <p>关键节省点：P2 从 2-3 天压缩到 0.5 天（Skill 替代自建 RAG）；P6 的 WebView 封装比原生开发快 3 倍。</p>
+    <p>距离 8 月 31 日截止还有约 26 天，时间充裕。</p>
+  </div>
+</section>
+
+<!-- ====== Section 6: 待确认事项 ====== -->
+<section>
+  <h2>六、待确认事项</h2>
+  <div class="card change-left">
+    <ol style="margin-top:0">
+      <li><strong>法律 Skill 在 Coze 中的调用方式</strong>：WorkBuddy 的 Skill 能否直接被 Coze Bot 调用？如果不能，是否需要在 Coze 中找等效插件或自定义封装？这个需要在 P0 验证。</li>
+      <li><strong>安卓开发环境</strong>：你是否已有 Android Studio 开发环境？如果没有，WebView 封装也需要安装配置。</li>
+      <li><strong>法律 Skill 选择</strong>：是同时使用 fadada + fazhi-law 两个 Skill，还是只用其中一个？建议两个都用，但需要确认是否有调用成本。</li>
+      <li><strong>shujuku 方案落地深度</strong>：是完整借鉴其 SQL 查询 + 世界书注入机制，还是只实现基础的档案持久化？MVP 阶段建议只做基础版。</li>
+    </ol>
+  </div>
+
+  <div class="callout tip">
+    <strong>下一步</strong>
+    请确认以上计划，特别是待确认事项的第 1 点（法律 Skill 能否在 Coze 中调用）。确认后我们从 P0 开始——注册 Coze 账号、创建 Bot、安装法律 Skill。
+  </div>
+</section>
+
+</main>
+
+</body>
+</html>

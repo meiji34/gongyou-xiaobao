@@ -1,0 +1,11 @@
+services:
+  gongyou-api:
+    build: .
+    container_name: gongyou-api
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./uploads:/app/uploads

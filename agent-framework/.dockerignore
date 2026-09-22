@@ -1,0 +1,11 @@
+.git
+.env
+.workbuddy
+__pycache__
+*.pyc
+*.apk
+android-project
+android-sdk
+gradle-8.7
+gradle-8.7-bin.zip
+requirements.docx

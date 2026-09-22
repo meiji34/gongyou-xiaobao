@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coze 平台"工友权益智能体"搭建计划</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#FBF8F4;--bg2:#F0ECE5;--ink:#2C2416;--muted:#8B7355;--rule:#D4C8B5;
+  --accent:#E8751A;--accent2:#2E7D6F;--danger:#C0392B;--success:#27AE60;
+}
+body{font-family:'Noto Sans SC','Microsoft YaHei',sans-serif;font-size:15px;line-height:1.7;color:var(--ink);background:var(--bg)}
+.container{max-width:880px;margin:0 auto;padding:0 2rem}
+.cover{background:linear-gradient(160deg,#2C2416 0%,#4A3728 40%,#3D2B1F 70%,#2C2416 100%);color:#FBF8F4;padding:4rem 2rem 3rem;text-align:center}
+.cover .badge{display:inline-block;background:rgba(232,117,26,.2);border:1px solid rgba(232,117,26,.4);color:#E8751A;font-size:.8rem;font-weight:600;letter-spacing:.1em;padding:.35rem 1.2rem;border-radius:50px;margin-bottom:1.5rem}
+.cover h1{font-size:2.2rem;font-weight:700;margin-bottom:.8rem}
+.cover h1 span{color:#E8751A}
+.cover .subtitle{font-size:1rem;color:rgba(251,248,244,.7);margin-bottom:1.5rem}
+main{padding:2.5rem 0}
+section{margin-bottom:3rem}
+h2{font-size:1.4rem;font-weight:700;color:var(--ink);margin-bottom:1rem;padding-bottom:.4rem;border-bottom:3px solid var(--accent);display:inline-block}
+h3{font-size:1.1rem;font-weight:700;margin:1.5rem 0 .6rem}
+h4{font-size:.95rem;font-weight:700;color:var(--accent2);margin:1rem 0 .4rem}
+p{margin-bottom:.8rem}
+strong{font-weight:700}
+.card{background:var(--bg2);border-radius:8px;padding:1.2rem 1.4rem;margin:1rem 0;border:1px solid var(--rule)}
+.card.accent-left{border-left:4px solid var(--accent)}
+.card.accent2-left{border-left:4px solid var(--accent2)}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+thead th{background:var(--accent);color:#FFF;padding:.6rem .8rem;text-align:left;font-weight:600;font-size:.82rem}
+tbody td{padding:.6rem .8rem;border-bottom:1px solid var(--rule);vertical-align:top}
+tbody tr:nth-child(even){background:var(--bg2)}
+td.match{font-weight:700;color:var(--success)}
+td.partial{font-weight:700;color:var(--accent)}
+.callout{padding:1rem 1.2rem;border-radius:8px;margin:1rem 0;font-size:.92rem}
+.callout.tip{background:rgba(46,125,111,.08);border-left:4px solid var(--accent2)}
+.callout.warn{background:rgba(232,117,26,.08);border-left:4px solid var(--accent)}
+.callout.danger{background:rgba(192,57,43,.07);border-left:4px solid var(--danger)}
+.callout strong{display:block;margin-bottom:.3rem}
+ul,ol{margin:.5rem 0 .8rem 1.3rem}
+li{margin-bottom:.3rem}
+.tag{display:inline-block;padding:.15rem .6rem;font-size:.75rem;font-weight:600;border-radius:4px;margin:.1rem .2rem}
+.tag.orange{background:rgba(232,117,26,.12);color:var(--accent)}
+.tag.green{background:rgba(46,125,111,.12);color:var(--accent2)}
+.tag.red{background:rgba(192,57,43,.12);color:var(--danger)}
+.tag.blue{background:rgba(24,95,165,.12);color:#185FA5}
+.phase{display:flex;align-items:flex-start;gap:1rem;margin:1.2rem 0;padding:1rem;background:var(--bg2);border-radius:8px;border:1px solid var(--rule)}
+.phase-num{flex-shrink:0;width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#FFF;font-size:.9rem}
+.phase-body{flex:1}
+.phase-body h4{margin:0 0 .3rem;color:var(--ink)}
+.phase-body .deliver{font-size:.82rem;color:var(--muted);margin-top:.3rem}
+.p0 .phase-num{background:#534AB7}
+.p1 .phase-num{background:#0F6E56}
+.p2 .phase-num{background:#854F0B}
+.p3 .phase-num{background:#185FA5}
+.p4 .phase-num{background:#993556}
+.p5 .phase-num{background:#3B6D11}
+.p6 .phase-num{background:#A32D2D}
+@media(max-width:768px){.container{padding:0 1rem}.cover h1{font-size:1.6rem}.phase{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <div class="badge">Coze Build Plan</div>
+  <h1>工友权益 & 暖心陪伴智能体<br><span>Coze 平台搭建计划</span></h1>
+  <p class="subtitle">面向"海之子"杯 AI 智能体挑战计划 · 从计划到可交互 MVP 的完整路径</p>
+</header>
+
+<main class="container">
+
+<!-- ====== Section 1: 搭建计划 ====== -->
+<section>
+  <h2>一、搭建阶段计划（7 阶段）</h2>
+  <p>整个搭建过程分为 7 个阶段，严格按依赖顺序推进。每个阶段有明确的前置依赖、核心任务和预期产出。</p>
+
+  <div class="phase p0">
+    <div class="phase-num">P0</div>
+    <div class="phase-body">
+      <h4>账号注册 & Bot 创建</h4>
+      <p>注册扣子（Coze）账号，创建空白 Bot，选定底层大模型。</p>
+      <ul>
+        <li>注册 coze.cn 账号（推荐国内版，支持微信小程序发布）</li>
+        <li>创建 Bot → 选择"自定义创建"</li>
+        <li>模型选型：对话生成选 GLM-4 或豆包 Douban-Pro；向量化用默认 embedding</li>
+      </ul>
+      <p class="deliver"><strong>预期产出：</strong>一个可运行的空壳 Bot，能进行基础文字对话。</p>
+    </div>
+  </div>
+
+  <div class="phase p1">
+    <div class="phase-num">P1</div>
+    <div class="phase-body">
+      <h4>Bot 人设 & Prompt 设计</h4>
+      <p>为 Bot 注入"工友一站式管家"的灵魂——这是所有后续组件的协作基础。</p>
+      <ul>
+        <li>角色设定："你是建筑工友的贴心管家，擅长用大白话解释法律问题"</li>
+        <li>通俗化翻译指令：所有法律条文回复必须用"工友能听懂的话"重新表述</li>
+        <li>安全边界规则：涉及自杀/自残倾向 → 立即转接心理热线；涉及暴力 → 转接法务</li>
+        <li>开场白 & 引导语设计</li>
+      </ul>
+      <p class="deliver"><strong>预期产出：</strong>一个有"人味"的基础 Bot，能对工友的咨询给出语气亲切的回复。</p>
+    </div>
+  </div>
+
+  <div class="phase p2">
+    <div class="phase-num">P2</div>
+    <div class="phase-body">
+      <h4>知识库构建（RAG 核心）</h4>
+      <p>这是方案文档中明确要求的 P0 优先项——确保 AI 只引用真实法条，不编造。</p>
+      <ul>
+        <li>收集资料：《劳动法》《劳动合同法》《工伤保险条例》《保障农民工工资支付条例》等</li>
+        <li>上传至 Coze 知识库（支持 PDF/Word/TXT）</li>
+        <li>配置分段策略：按"条"分段，保留条文编号</li>
+        <li>向量化配置：使用 Coze 默认 embedding 模型</li>
+        <li>检索策略：混合检索（向量+关键词），召回 top-5</li>
+      </ul>
+      <p class="deliver"><strong>预期产出：</strong>Bot 能基于真实法规条文回答问题，并在回复中标注引用来源。</p>
+    </div>
+  </div>
+
+  <div class="phase p3">
+    <div class="phase-num">P3</div>
+    <div class="phase-body">
+      <h4>Workflow 工作流编排</h4>
+      <p>这是 Coze 的核心能力——用可视化工作流实现"意图路由→分支处理→安全判断→转接/回复"的完整链路。</p>
+      <ul>
+        <li><strong>意图路由节点：</strong>用 LLM 分类用户意图为「权益咨询/心理陪伴/便民工具」三类</li>
+        <li><strong>权益咨询工作流：</strong>知识库检索 → LLM 组织回答 → 标注引用</li>
+        <li><strong>心理陪伴工作流：</strong>情绪识别 → 轻度疏导话术 → 高危识别 → 转接阈值判断</li>
+        <li><strong>便民工具工作流：</strong>宿舍报修/食堂反馈/班车查询的占位逻辑</li>
+      </ul>
+      <p class="deliver"><strong>预期产出：</strong>三条主流程能跑通，用户输入能被正确分流到对应处理路径。</p>
+    </div>
+  </div>
+
+  <div class="phase p4">
+    <div class="phase-num">P4</div>
+    <div class="phase-body">
+      <h4>语音 & 插件交互模块接入</h4>
+      <p>实现方案中强调的"语音交互优先"——这是工友群体的核心使用门槛降低手段。</p>
+      <ul>
+        <li><strong>ASR 语音识别插件：</strong>配置语音输入能力（Coze 内置或接入第三方）</li>
+        <li><strong>TTS 语音合成插件：</strong>回复自动语音播报</li>
+        <li><strong>OCR 图片识别插件：</strong>工友可拍照上传工资条/合同（Coze 多模态插件）</li>
+        <li><strong>转接通知插件：</strong>模拟"转接 HR/法务/心理热线"的动作（可先用卡片消息占位）</li>
+      </ul>
+      <p class="deliver"><strong>预期产出：</strong>用户可通过语音输入对话，Bot 可语音回复，支持图片上传识别。</p>
+    </div>
+  </div>
+
+  <div class="phase p5">
+    <div class="phase-num">P5</div>
+    <div class="phase-body">
+      <h4>Memory 记忆 & Database 数据模块</h4>
+      <p>实现多轮对话记忆和工友档案持久化——让 AI"记住"工友之前说过的问题。</p>
+      <ul>
+        <li><strong>对话记忆变量：</strong>配置 Coze Memory，保留最近 N 轮对话上下文</li>
+        <li><strong>工友档案表（Database）：</strong>建表字段：user_id / 工种 / 入职日期 / 历史咨询摘要</li>
+        <li><strong>工单记录表：</strong>记录每次咨询的问题类型、AI回复、是否转接</li>
+        <li><strong>长期记忆写入：</strong>每次对话结束后，摘要写入工友档案</li>
+      </ul>
+      <p class="deliver"><strong>预期产出：</strong>Bot 能记住上下文，支持多轮追问（如先说"老板不发工资"，再补充"已经三个月了"）。</p>
+    </div>
+  </div>
+
+  <div class="phase p6">
+    <div class="phase-num">P6</div>
+    <div class="phase-body">
+      <h4>发布 & 测试 & 调优</h4>
+      <p>将 Agent 发布到评委可体验的渠道，进行端到端测试与 Prompt 调优。</p>
+      <ul>
+        <li><strong>发布渠道：</strong>优先发布为 Coze Web 链接（评委直接体验）；有条件同步发微信小程序</li>
+        <li><strong>UI 布局确认：</strong>确保界面包含输入框 + 语音输入按钮 + 图片上传按钮</li>
+        <li><strong>端到端测试：</strong>模拟工友张三的全流程——语音咨询欠薪 → AI 回答 → 转接</li>
+        <li><strong>Prompt 调优：</strong>反复测试法律幻觉问题，确保 AI 不编造法条</li>
+        <li><strong>方言测试：</strong>用四川话/河南话测试语音识别容错能力</li>
+      </ul>
+      <p class="deliver"><strong>预期产出：</strong>一个可体验的 MVP 成品 + 可提交给评委的体验链接。</p>
+    </div>
+  </div>
+
+  <div class="callout tip">
+    <strong>依赖关系总结</strong>
+    P0 → P1 → P2 → P3 → P4 → P5 → P6，严格串行。其中 P2（知识库）和 P3（工作流）是技术核心，建议投入最多时间。P4 和 P5 可部分并行（语音插件和数据库配置互不依赖），但需在 P3 工作流跑通后才有意义。
+  </div>
+</section>
+
+<!-- ====== Section 2: 核心组件清单 ====== -->
+<section>
+  <h2>二、核心组件清单</h2>
+  <p>以下是 5 大类核心组件，按架构层级组织。每个组件标注了在 Coze 平台的对应位置和搭建阶段。</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:18%">组件</th>
+        <th style="width:14%">架构层</th>
+        <th style="width:10%">搭建阶段</th>
+        <th style="width:38%">核心功能</th>
+        <th style="width:20%">Coze 对应</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>对话引擎</strong></td>
+        <td>对话引擎层</td>
+        <td><span class="tag orange">P1</span></td>
+        <td>Bot 人设、Prompt 指令、大模型选型、通俗化翻译逻辑</td>
+        <td>Bot 编排 → 人设与 Prompt</td>
+      </tr>
+      <tr>
+        <td><strong>意图路由器</strong></td>
+        <td>对话引擎层</td>
+        <td><span class="tag blue">P3</span></td>
+        <td>LLM 分类用户输入为权益/心理/便民三类，分发到对应工作流</td>
+        <td>Workflow → LLM 分类节点</td>
+      </tr>
+      <tr>
+        <td><strong>权益咨询工作流</strong></td>
+        <td>对话引擎层</td>
+        <td><span class="tag blue">P3</span></td>
+        <td>知识库检索 → 组织回答 → 标注引用来源 → 安全阈值判断</td>
+        <td>Workflow 编排</td>
+      </tr>
+      <tr>
+        <td><strong>心理陪伴工作流</strong></td>
+        <td>对话引擎层</td>
+        <td><span class="tag blue">P3</span></td>
+        <td>情绪识别 → 轻度疏导 → 高危识别 → 转接心理热线</td>
+        <td>Workflow 编排</td>
+      </tr>
+      <tr>
+        <td><strong>语音输入模块（ASR）</strong></td>
+        <td>交互接入层</td>
+        <td><span class="tag green">P4</span></td>
+        <td>语音转文字，支持方言容错，降低工友打字门槛</td>
+        <td>插件 → 语音识别</td>
+      </tr>
+      <tr>
+        <td><strong>语音输出模块（TTS）</strong></td>
+        <td>交互接入层</td>
+        <td><span class="tag green">P4</span></td>
+        <td>回复自动语音播报，工友可"听"而非"读"</td>
+        <td>插件 → 语音合成</td>
+      </tr>
+      <tr>
+        <td><strong>OCR 图片识别</strong></td>
+        <td>交互接入层</td>
+        <td><span class="tag green">P4</span></td>
+        <td>工友拍照上传工资条/合同，AI 识别关键信息</td>
+        <td>多模态插件</td>
+      </tr>
+      <tr>
+        <td><strong>交互输入框</strong></td>
+        <td>用户界面层</td>
+        <td><span class="tag red">P6</span></td>
+        <td>文字输入框 + 语音按钮 + 图片上传按钮，构成完整交互 UI</td>
+        <td>发布渠道内置 UI</td>
+      </tr>
+      <tr>
+        <td><strong>记忆模块</strong></td>
+        <td>对话引擎层</td>
+        <td><span class="tag green">P5</span></td>
+        <td>对话历史变量（短期记忆）+ 工友档案（长期记忆），支持多轮追问</td>
+        <td>Memory 配置 + 变量</td>
+      </tr>
+      <tr>
+        <td><strong>Database 数据表</strong></td>
+        <td>对话引擎层</td>
+        <td><span class="tag green">P5</span></td>
+        <td>工友档案表 + 工单记录表，持久化用户信息和咨询历史</td>
+        <td>Database 数据表</td>
+      </tr>
+      <tr>
+        <td><strong>RAG 法规知识库</strong></td>
+        <td>知识能力层</td>
+        <td><span class="tag orange">P2</span></td>
+        <td>劳动法/工伤条例/工资支付条例，向量检索+关键词混合检索</td>
+        <td>知识库</td>
+      </tr>
+      <tr>
+        <td><strong>心理疏导知识库</strong></td>
+        <td>知识能力层</td>
+        <td><span class="tag orange">P2</span></td>
+        <td>情绪话术库、高危识别规则、疏导流程指引</td>
+        <td>知识库</td>
+      </tr>
+      <tr>
+        <td><strong>转接通知插件</strong></td>
+        <td>外部服务层</td>
+        <td><span class="tag green">P4</span></td>
+        <td>触发"转接 HR/法务/心理热线"动作，先以卡片消息占位</td>
+        <td>自定义插件 / 消息卡片</td>
+      </tr>
+      <tr>
+        <td><strong>用户界面布局</strong></td>
+        <td>用户界面层</td>
+        <td><span class="tag red">P6</span></td>
+        <td>聊天窗口 + 底部输入区（输入框/语音键/图片键）+ 功能快捷入口</td>
+        <td>发布渠道 UI</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ====== Section 3: 数据流转 ====== -->
+<section>
+  <h2>三、组件间数据流转与调用关系</h2>
+  <p>以下是用户一次输入的完整数据流转路径，标注了每一步涉及的组件和数据格式。</p>
+
+  <div class="card accent-left">
+    <h4 style="margin-top:0">主流转路径（6 步）</h4>
+    <ol>
+      <li><strong>用户输入</strong> → 语音/文字/图片，经 <span class="tag orange">ASR/OCR</span> 统一转为文本</li>
+      <li><strong>意图路由器</strong> → LLM 分类为「权益/心理/便民」三类，分发到对应 <span class="tag blue">Workflow</span></li>
+      <li><strong>分支工作流执行</strong> → 权益咨询查 <span class="tag orange">RAG 知识库</span>；心理陪伴查 <span class="tag orange">疏导库</span>；便民工具执行占位逻辑</li>
+      <li><strong>安全阈值判断</strong> → 权益问题超复杂 → 转人工；心理高危 → 转热线；便民 → 直接回复</li>
+      <li><strong>回复合成</strong> → LLM 组织通俗化回复 + 写入 <span class="tag green">Memory</span> + 写入 <span class="tag green">Database</span></li>
+      <li><strong>输出</strong> → 文字展示 + <span class="tag orange">TTS</span> 语音播报 + 转接卡片（如触发）</li>
+    </ol>
+  </div>
+
+  <h3>调用关系矩阵</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>调用方</th>
+        <th>被调用方</th>
+        <th>数据格式</th>
+        <th>调用时机</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>用户界面</td><td>ASR 插件</td><td>音频流 → 文本</td><td>用户点击语音键说话</td></tr>
+      <tr><td>用户界面</td><td>OCR 插件</td><td>图片 → 文本描述</td><td>用户上传工资条照片</td></tr>
+      <tr><td>意图路由器</td><td>LLM 分类节点</td><td>文本 → 分类标签</td><td>每次用户输入后</td></tr>
+      <tr><td>权益咨询 Workflow</td><td>RAG 知识库</td><td>查询文本 → 检索结果(top5)</td><td>分类为权益类时</td></tr>
+      <tr><td>权益咨询 Workflow</td><td>LLM 生成节点</td><td>检索结果+问题 → 回复文本</td><td>检索完成后</td></tr>
+      <tr><td>心理陪伴 Workflow</td><td>心理疏导知识库</td><td>情绪关键词 → 话术</td><td>分类为心理类时</td></tr>
+      <tr><td>所有 Workflow</td><td>Memory 变量</td><td>写入/读取对话历史</td><td>每轮对话开始和结束</td></tr>
+      <tr><td>所有 Workflow</td><td>Database</td><td>写入工单记录</td><td>每次对话结束</td></tr>
+      <tr><td>安全阈值节点</td><td>转接通知插件</td><td>触发信号 → 卡片消息</td><td>判断超阈值时</td></tr>
+      <tr><td>回复合成节点</td><td>TTS 插件</td><td>文本 → 音频</td><td>回复生成后</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ====== Section 4: 搭建顺序与依赖 ====== -->
+<section>
+  <h2>四、搭建顺序与依赖关系</h2>
+
+  <div class="callout warn">
+    <strong>关键依赖链</strong>
+    P0（账号+Bot） → P1（人设+Prompt） → P2（知识库） → P3（工作流） → P4（语音插件） → P5（记忆+DB） → P6（发布测试）
+  </div>
+
+  <h3>依赖关系详解</h3>
+  <table>
+    <thead>
+      <tr><th>阶段</th><th>前置依赖</th><th>阻塞下游</th><th>可并行项</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>P0 账号注册</strong></td><td>无</td><td>P1-P6 全部</td><td>—</td></tr>
+      <tr><td><strong>P1 人设 Prompt</strong></td><td>P0</td><td>P2-P6</td><td>—</td></tr>
+      <tr><td><strong>P2 知识库</strong></td><td>P0（知识库功能需 Bot 存在）</td><td>P3（工作流需调用知识库）</td><td>可与 P1 后期并行</td></tr>
+      <tr><td><strong>P3 工作流</strong></td><td>P1（需 Prompt 基础）+ P2（需知识库可调用）</td><td>P4-P6</td><td>—</td></tr>
+      <tr><td><strong>P4 语音插件</strong></td><td>P3（工作流需先跑通）</td><td>P6</td><td>可与 P5 并行</td></tr>
+      <tr><td><strong>P5 记忆 DB</strong></td><td>P3（工作流需先跑通）</td><td>P6</td><td>可与 P4 并行</td></tr>
+      <tr><td><strong>P6 发布测试</strong></td><td>P0-P5 全部</td><td>—</td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <div class="card accent2-left">
+    <h4 style="margin-top:0">并行优化建议</h4>
+    <ul>
+      <li><strong>P1 后期 + P2 全程</strong>可并行：Prompt 初稿写完后，知识库收集和上传可同步进行</li>
+      <li><strong>P4 + P5</strong>可并行：语音插件配置和数据库建表互不依赖</li>
+      <li><strong>P6 的"发布"和"调优"</strong>可迭代循环：先发布再持续调优 Prompt</li>
+    </ul>
+  </div>
+
+  <h3>风险与对策</h3>
+  <div class="callout danger">
+    <strong>风险1：AI 法律幻觉</strong>
+    对策：P2 知识库分段保留条文编号，P3 工作流强制标注引用来源，P6 测试中反复验证法条准确性。
+  </div>
+  <div class="callout danger">
+    <strong>风险2：方言识别失败率</strong>
+    对策：P4 选 Coze 内置 ASR 的方言模型，P6 用四川话/河南话做容错测试；如效果差，Prompt 中加"请用标准普通话重述"引导。
+  </div>
+  <div class="callout danger">
+    <strong>风险3：心理陪伴越界</strong>
+    对策：P1 Prompt 中明确"只做轻度疏导，不做诊断"；P3 工作流加高危关键词检测（自杀/不想活），命中即转接。
+  </div>
+</section>
+
+<!-- ====== Section 5: 界面要求确认 ====== -->
+<section>
+  <h2>五、最终界面要求确认</h2>
+  <p>根据你的要求，最终界面必须包含以下交互功能按键：</p>
+
+  <table>
+    <thead>
+      <tr><th>界面元素</th><th>功能</th><th>实现阶段</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>文字输入框</strong></td><td>用户可打字输入咨询内容</td><td>P6 发布渠道内置</td></tr>
+      <tr><td><strong>语音输入按钮</strong></td><td>长按说话，松手转文字（ASR）</td><td>P4 配置 + P6 发布</td></tr>
+      <tr><td><strong>图片上传按钮</strong></td><td>拍照/相册上传工资条、合同照片</td><td>P4 配置 + P6 发布</td></tr>
+      <tr><td><strong>语音播报开关</strong></td><td>回复自动语音朗读（TTS），可关闭</td><td>P4 配置 + P6 发布</td></tr>
+      <tr><td><strong>快捷入口</strong></td><td>"我要咨询欠薪""我想找人聊聊"等快捷按钮</td><td>P6 自定义开场白</td></tr>
+      <tr><td><strong>转接卡片</strong></td><td>触发转接时显示"已通知HR/法务"卡片</td><td>P3 工作流 + P6</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout tip">
+    <strong>Coze 发布渠道说明</strong>
+    Coze 发布到"商店"或"Web 链接"时，界面自动包含输入框。语音输入按钮需要 P4 配置 ASR 插件后才会出现。图片上传需开启多模态。最终选 Web 链接发布，评委直接点击体验。
+  </div>
+</section>
+
+<!-- ====== Section 6: 下一步 ====== -->
+<section>
+  <h2>六、下一步</h2>
+  <div class="card accent-left">
+    <p style="margin:0;">以上为完整计划与组件清单。<strong>请确认后，我们将从 P0 阶段开始具体搭建</strong>——第一步是引导你在 Coze 平台注册账号、创建 Bot、选定大模型，并编写 P1 阶段的工友管家 Prompt。</p>
+    <p style="margin:.8rem 0 0;"><strong>如有调整意见，请指出，我们修订后再启动。</strong></p>
+  </div>
+</section>
+
+</main>
+
+</body>
+</html>

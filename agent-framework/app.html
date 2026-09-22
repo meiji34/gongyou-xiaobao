@@ -1,0 +1,2674 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>工友小宝</title>
+<style>
+/* ========== CSS Variables ========== */
+:root {
+  --bg-primary: #F7F6F3;
+  --bg-card: #FFFFFF;
+  --bg-input: #F0EFEA;
+  --text-primary: #37352F;
+  --text-secondary: #73726E;
+  --accent-primary: #F26430;
+  --accent-light: rgba(242, 100, 48, 0.15);
+  --accent-secondary: #D4A574;
+  --accent-soft: #F2A6A8;
+  --border-subtle: #D4D2C7;
+  --border-light: #E8E6DF;
+  --success-green: #0F9D58;
+  --error-red: #EB5757;
+  --bubble-other: #FFFFFF;
+  --bubble-user-rights: #F26430;
+  --bubble-user-talk: #D4A574;
+  --radius-card: 16px;
+  --radius-button: 12px;
+  --radius-chip: 20px;
+  --radius-bubble: 16px;
+  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.06);
+  --shadow-small: 0 1px 8px rgba(0, 0, 0, 0.04);
+  --shadow-accent: 0 6px 20px rgba(242, 100, 48, 0.15);
+  --shadow-btn: 0 4px 12px rgba(242, 100, 48, 0.15);
+}
+
+/* ========== Reset ========== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ===== 需求2：统一点击手感与动画 ===== */
+.voice-consult-card, .action-card, .quick-item, .tool-item, .tab-item,
+.hot-question-card, .menu-item, .phone-item, .community-post-btn,
+.submit-btn, .evidence-btn, .chip, .community-tag, .contract-preview, .bus-card, .video-card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+.voice-consult-card:active, .action-card:active, .quick-item:active, .tool-item:active,
+.hot-question-card:active, .menu-item:active, .phone-item:active, .bus-card:active,
+.video-card:active, .contract-preview:active {
+  transform: scale(0.97);
+}
+.submit-btn:active, .evidence-btn:active, .community-post-btn:active {
+  transform: scale(0.95);
+}
+.tab-item { position: relative; }
+.tab-item:active .tab-label, .tab-item:active svg { opacity: 0.6; }
+.tab-item.active::after {
+  content: ''; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%);
+  width: 16px; height: 3px; border-radius: 2px; background: var(--accent-primary);
+}
+.quick-item { border-radius: 12px; }
+.chip:active, .community-tag:active { transform: scale(0.92); }
+
+/* ===== 小宝形象 ===== */
+.xiaobao-avatar { position: relative; width: 40px; height: 40px; flex-shrink: 0; }
+.xiaobao-dot {
+  position: absolute; right: 1px; bottom: 1px; width: 10px; height: 10px;
+  border-radius: 5px; background: #0F9D58; border: 2px solid var(--bg-primary);
+}
+
+/* ===== 找帮助：电话簿 ===== */
+.phone-list { display: flex; flex-direction: column; gap: 10px; }
+.phone-item {
+  display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+  border-radius: 14px; background: var(--bg-card); box-shadow: var(--shadow-small);
+  text-decoration: none;
+}
+.phone-icon {
+  width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center;
+  justify-content: center; flex-shrink: 0;
+}
+.phone-icon.red { background: #EB5757; }
+.phone-icon.orange { background: var(--accent-primary); }
+.phone-icon.honey { background: var(--accent-secondary); }
+.phone-texts { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.phone-name { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+.phone-desc { font-size: 12px; color: var(--text-secondary); }
+
+/* ===== 班车查询 ===== */
+.bus-card { background: var(--bg-card); border-radius: var(--radius-card); padding: 16px; box-shadow: var(--shadow-card); margin-bottom: 14px; }
+.bus-route-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.bus-badge { padding: 4px 10px; border-radius: 8px; background: var(--accent-light); color: var(--accent-primary); font-size: 12px; font-weight: 700; }
+.bus-route-name { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+.bus-timeline { display: flex; flex-direction: column; }
+.bus-stop { display: flex; align-items: center; gap: 10px; padding: 7px 0; }
+.bus-stop-dot { width: 8px; height: 8px; border-radius: 4px; background: var(--accent-primary); flex-shrink: 0; }
+.bus-stop-name { flex: 1; font-size: 14px; color: var(--text-primary); }
+.bus-stop-time { font-size: 14px; font-weight: 600; color: var(--accent-primary); }
+.bus-note { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-light); font-size: 12px; color: var(--text-secondary); }
+
+/* ===== 安全教育视频 ===== */
+.video-card { background: var(--bg-card); border-radius: var(--radius-card); padding: 12px; box-shadow: var(--shadow-card); margin-bottom: 14px; }
+.video-wrapper { border-radius: 12px; overflow: hidden; background: #1a1a1a; }
+.video-wrapper video { width: 100%; display: block; }
+.video-info { display: flex; flex-direction: column; gap: 4px; padding: 10px 4px 2px; }
+.video-title { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+.video-desc { font-size: 13px; color: var(--text-secondary); line-height: 20px; }
+.safety-tips-card { background: var(--accent-light); border-radius: var(--radius-card); padding: 16px; margin-bottom: 20px; }
+.tip-row { display: flex; gap: 10px; padding: 6px 0; font-size: 13px; color: var(--text-primary); line-height: 20px; }
+.tip-num { width: 18px; height: 18px; border-radius: 9px; background: var(--accent-primary); color: white; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+
+/* ===== 工单/上工记录 ===== */
+.worklog-summary { display: flex; gap: 10px; margin-bottom: 16px; }
+.summary-item { flex: 1; background: var(--bg-card); border-radius: 14px; padding: 14px 8px; box-shadow: var(--shadow-small); display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.summary-num { font-size: 22px; font-weight: 700; color: var(--accent-primary); }
+.summary-label { font-size: 12px; color: var(--text-secondary); }
+.form-card { background: var(--bg-card); border-radius: var(--radius-card); padding: 16px; box-shadow: var(--shadow-card); display: flex; flex-direction: column; gap: 12px; }
+.form-row { display: flex; flex-direction: column; gap: 6px; }
+.wl-input { height: 44px; border: 1px solid var(--border-subtle); border-radius: 10px; padding: 0 12px; font-size: 15px; background: var(--bg-primary); color: var(--text-primary); outline: none; font-family: inherit; }
+.wl-input:focus { border-color: var(--accent-primary); }
+.wl-entry { background: var(--bg-card); border-radius: 14px; padding: 12px 14px; box-shadow: var(--shadow-small); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+.wl-entry-left { display: flex; flex-direction: column; gap: 3px; }
+.wl-entry-date { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.wl-entry-detail { font-size: 12px; color: var(--text-secondary); }
+.wl-entry-wage { font-size: 15px; font-weight: 700; color: var(--accent-primary); }
+.wl-delete { padding: 6px 10px; border: none; background: none; color: var(--text-secondary); font-size: 12px; cursor: pointer; font-family: inherit; }
+.contract-card { background: var(--bg-card); border-radius: var(--radius-card); padding: 14px; box-shadow: var(--shadow-card); }
+.contract-preview { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 20px; border: 1.5px dashed var(--border-subtle); border-radius: 12px; color: var(--accent-secondary); font-size: 13px; cursor: pointer; }
+.contract-img-wrap { margin-top: 10px; }
+.contract-img-wrap img { width: 100%; border-radius: 10px; display: block; }
+.evidence-btn { width: 100%; height: 48px; border: none; border-radius: 12px; background: var(--accent-secondary); color: white; font-size: 15px; font-weight: 600; cursor: pointer; margin: 10px 0 20px; font-family: inherit; }
+
+/* ===== 工友之家社区 ===== */
+.community-post-box { background: var(--bg-card); border-radius: var(--radius-card); padding: 14px; box-shadow: var(--shadow-card); margin-bottom: 16px; }
+.community-input { width: 100%; height: 72px; border: 1px solid var(--border-light); border-radius: 10px; padding: 10px; font-size: 14px; resize: none; background: var(--bg-primary); color: var(--text-primary); outline: none; font-family: inherit; }
+.community-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+.community-tag-row { display: flex; gap: 8px; }
+.community-tag { padding: 6px 12px; border-radius: 14px; font-size: 12px; background: var(--bg-input); color: var(--text-secondary); cursor: pointer; }
+.community-tag.selected { background: var(--accent-light); color: var(--accent-primary); font-weight: 600; }
+.community-post-btn { padding: 8px 18px; border: none; border-radius: 12px; background: var(--accent-primary); color: white; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
+.post-card { background: var(--bg-card); border-radius: var(--radius-card); padding: 14px; box-shadow: var(--shadow-card); margin-bottom: 12px; }
+.post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.post-avatar { width: 36px; height: 36px; border-radius: 18px; display: flex; align-items: center; justify-content: center; color: white; font-size: 15px; font-weight: 700; flex-shrink: 0; }
+.post-user-info { flex: 1; display: flex; flex-direction: column; }
+.post-user { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.post-time { font-size: 11px; color: var(--text-secondary); }
+.post-tag { padding: 3px 8px; border-radius: 8px; font-size: 11px; background: var(--accent-light); color: var(--accent-primary); }
+.post-content { font-size: 14px; color: var(--text-primary); line-height: 22px; margin-bottom: 10px; }
+.post-actions { display: flex; gap: 18px; }
+.post-action { display: flex; align-items: center; gap: 5px; font-size: 13px; color: var(--text-secondary); cursor: pointer; }
+.post-action.liked { color: var(--accent-primary); }
+.post-comments { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-light); display: flex; flex-direction: column; gap: 6px; }
+.post-comment { font-size: 13px; color: var(--text-primary); line-height: 20px; }
+.post-comment b { color: var(--accent-secondary); font-weight: 600; }
+.comment-input-row { display: flex; gap: 8px; margin-top: 8px; }
+.comment-input { flex: 1; height: 36px; border: 1px solid var(--border-light); border-radius: 18px; padding: 0 12px; font-size: 13px; background: var(--bg-primary); color: var(--text-primary); outline: none; font-family: inherit; }
+.comment-send { padding: 0 14px; border: none; border-radius: 18px; background: var(--accent-secondary); color: white; font-size: 13px; cursor: pointer; font-family: inherit; }
+
+/* ===== 录音状态 ===== */
+.voice-btn.recording { background: #EB5757 !important; animation: recordPulse 1.2s infinite; }
+@keyframes recordPulse {
+  0% { box-shadow: 0 0 0 0 rgba(235,87,87,0.5); }
+  70% { box-shadow: 0 0 0 14px rgba(235,87,87,0); }
+  100% { box-shadow: 0 0 0 0 rgba(235,87,87,0); }
+}
+.typing-dots { display: inline-flex; gap: 4px; align-items: center; }
+.typing-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--text-secondary); animation: typingBounce 1.2s infinite; }
+.typing-dots i:nth-child(2) { animation-delay: 0.15s; }
+.typing-dots i:nth-child(3) { animation-delay: 0.3s; }
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
+.voice-mode-switch { display: flex; gap: 6px; align-items: center; }
+.mode-chip { padding: 5px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; background: var(--bg-input); color: var(--text-secondary); cursor: pointer; border: none; font-family: inherit; }
+.mode-chip.active { background: var(--accent-light); color: var(--accent-primary); }
+
+body {
+  font-family: 'Inter', 'PingFang SC', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #E0E0E0;
+  color: var(--text-primary);
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+/* ========== App Container ========== */
+.app-container {
+  width: 100%;
+  max-width: 414px;
+  min-height: 100vh;
+  background: var(--bg-primary);
+  position: relative;
+  overflow: hidden;
+}
+
+/* ========== Page System ========== */
+.page {
+  display: none;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  background: var(--bg-primary);
+  overflow: hidden;
+}
+.page.active {
+  display: flex;
+  animation: pageFadeIn 0.28s ease;
+}
+/* PPT 式淡入上移动画（页面切换手感） */
+@keyframes pageFadeIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* 聊天气泡进场动画（去 AI 味的生动感） */
+.chat-bubble-row {
+  animation: bubbleIn 0.22s ease;
+}
+@keyframes bubbleIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ========== Status Bar（demo 假状态栏，已隐藏） ========== */
+.status-bar {
+  display: none !important;
+}
+.status-bar .time {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.status-bar .status-icons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.status-bar .status-icons svg {
+  display: block;
+}
+
+/* ========== Nav Bar ========== */
+.nav-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 56px;
+  padding: 0 16px;
+  background: var(--bg-card);
+  flex-shrink: 0;
+}
+.nav-bar .nav-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.nav-bar .back-btn {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+.nav-bar .right-spacer {
+  width: 20px;
+  height: 20px;
+}
+
+/* ========== Content Wrapper ========== */
+.content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 24px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ========== Home Page ========== */
+.greeting-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.greeting-card .greeting {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.greeting-card .sub-greeting {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+
+.voice-consult-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 28px;
+  height: 160px;
+  background: var(--accent-primary);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-accent);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+.voice-consult-card:active {
+  transform: scale(0.98);
+}
+.voice-consult-card .voice-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+.voice-consult-card .voice-desc {
+  font-size: 20px;
+  font-weight: 400;
+  color: #FFFFFF;
+  line-height: 28px;
+  opacity: 0.9;
+}
+
+.secondary-actions {
+  display: flex;
+  gap: 16px;
+}
+.secondary-actions .action-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 160px;
+  padding: 20px;
+  background: var(--bg-card);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+.secondary-actions .action-card:active {
+  transform: scale(0.98);
+}
+.action-card .action-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.action-card .action-desc {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  line-height: 20px;
+}
+
+.quick-access-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.quick-access-section .section-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+.quick-grid {
+  display: flex;
+  gap: 12px;
+}
+.quick-grid .quick-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  background: var(--bg-card);
+  border-radius: 12px;
+  box-shadow: var(--shadow-small);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+.quick-grid .quick-item:active {
+  transform: scale(0.95);
+}
+.quick-grid .quick-item .quick-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  text-align: center;
+}
+
+.hot-questions-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.hot-questions-section .section-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+.hot-question-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: var(--bg-card);
+  border-radius: 12px;
+  box-shadow: var(--shadow-small);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+.hot-question-card:active {
+  transform: scale(0.98);
+}
+.hot-question-card .question-text {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* ========== Tab Bar ========== */
+.tab-bar {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  height: 83px;
+  padding: 12px;
+  background: var(--bg-card);
+  flex-shrink: 0;
+}
+.tab-bar .tab-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+}
+.tab-bar .tab-item .tab-label {
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+.tab-bar .tab-item.active .tab-label {
+  font-weight: 600;
+  color: var(--accent-primary);
+}
+
+/* ========== Chat Page ========== */
+.chat-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 16px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.chat-bubble-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+.chat-bubble-row.user {
+  justify-content: flex-end;
+}
+
+.bot-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.bot-avatar.rights {
+  background: #FFF url('avatars/xiaobao_legal.png') center/cover no-repeat;
+  border: 1.5px solid #FFE0CC;
+}
+.bot-avatar.talk {
+  background: #FFF url('avatars/xiaobao_talk.png') center/cover no-repeat;
+  border: 1.5px solid #FFE0CC;
+}
+/* 吉祥物图片头像接管后，隐藏原 SVG 图标 */
+.bot-avatar svg { display: none; }
+/* 首页小宝形象 */
+.xiaobao-avatar {
+  background: #FFF url('avatars/xiaobao_default.png') center/cover no-repeat !important;
+  border-radius: 50% !important;
+  border: 2px solid #FFE0CC;
+  overflow: hidden;
+}
+.xiaobao-avatar svg { display: none; }
+
+.bot-message {
+  max-width: 280px;
+  padding: 14px;
+  background: var(--bg-card);
+  border-radius: var(--radius-bubble);
+  box-shadow: var(--shadow-small);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.bot-message .msg-text {
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--text-primary);
+  line-height: 24px;
+}
+.bot-message .msg-step {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  line-height: 22px;
+}
+.bot-message .msg-warn {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--accent-primary);
+  line-height: 20px;
+}
+.bot-message .msg-disclaimer {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  line-height: 16px;
+}
+
+.user-message {
+  max-width: 220px;
+  padding: 14px;
+  border-radius: var(--radius-bubble);
+  display: flex;
+  flex-direction: column;
+}
+.user-message.rights {
+  background: var(--bubble-user-rights);
+}
+.user-message.talk {
+  background: var(--bubble-user-talk);
+}
+.user-message .msg-text {
+  font-size: 15px;
+  font-weight: 400;
+  color: #FFFFFF;
+  line-height: 24px;
+}
+.user-message.image-message {
+  max-width: 240px;
+  gap: 8px;
+}
+.image-message img {
+  display: block;
+  width: 210px;
+  max-height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* ========== Voice Input Bar ========== */
+.voice-input-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: var(--bg-card);
+  flex-shrink: 0;
+}
+.voice-input-bar .spacer {
+  width: 28px;
+  height: 28px;
+}
+.voice-btn {
+  width: 72px;
+  height: 72px;
+  border-radius: 36px;
+  background: var(--accent-primary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  box-shadow: var(--shadow-btn);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.voice-btn:active {
+  transform: scale(0.95);
+}
+.voice-btn .voice-label {
+  font-size: 9px;
+  font-weight: 500;
+  color: #FFFFFF;
+  opacity: 0.8;
+}
+
+/* ========== Text Input Bar ========== */
+.text-input-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  background: var(--bg-card);
+  flex-shrink: 0;
+}
+.agent-action-bar {
+  display: flex;
+  gap: 8px;
+  padding: 0 16px 10px;
+  background: var(--bg-card);
+  overflow-x: auto;
+}
+.agent-action-btn {
+  flex: 0 0 auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  background: #FFF8F2;
+  color: var(--accent-primary);
+  padding: 8px 10px;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+}
+.agent-action-btn:active { transform: scale(0.96); }
+.talk-input-wrap {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+.text-input {
+  flex: 1;
+  height: 40px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 20px;
+  background: var(--bg-input);
+  font-size: 14px;
+  color: var(--text-primary);
+  outline: none;
+  font-family: inherit;
+}
+.text-input::placeholder {
+  color: var(--text-secondary);
+}
+.send-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background: var(--accent-secondary);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+.send-btn:active {
+  transform: scale(0.9);
+}
+
+/* ========== Tool List Page ========== */
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.page-subtitle {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+.tool-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.tool-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: var(--bg-card);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+.tool-item:active {
+  transform: scale(0.98);
+}
+.tool-item-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.tool-item-texts {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.tool-item-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.tool-item-desc {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+
+/* ========== Form Page ========== */
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.form-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.chips-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.chip {
+  padding: 10px 16px;
+  border-radius: var(--radius-chip);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.chip.selected {
+  background: var(--accent-primary);
+  color: #FFFFFF;
+  font-weight: 500;
+}
+.chip.unselected {
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-weight: 400;
+  border: 1px solid var(--border-subtle);
+}
+.photo-upload {
+  width: 100px;
+  height: 100px;
+  border-radius: 12px;
+  background: var(--bg-card);
+  border: 1.5px dashed var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+}
+.photo-upload .photo-label {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+.desc-box {
+  width: 100%;
+  height: 120px;
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  font-size: 14px;
+  color: var(--text-primary);
+  outline: none;
+  resize: none;
+  font-family: inherit;
+  line-height: 22px;
+}
+.desc-box::placeholder {
+  color: var(--text-secondary);
+}
+.voice-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.voice-hint .hint-text {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--accent-primary);
+}
+.submit-btn {
+  width: 100%;
+  height: 52px;
+  border-radius: var(--radius-button);
+  background: var(--accent-primary);
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  color: #FFFFFF;
+  cursor: pointer;
+  box-shadow: var(--shadow-btn);
+  transition: transform 0.15s ease;
+  font-family: inherit;
+}
+.submit-btn:active {
+  transform: scale(0.98);
+}
+
+/* ========== Profile Page ========== */
+.profile-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 24px;
+  background: var(--bg-card);
+  flex-shrink: 0;
+}
+.profile-avatar {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  border-radius: 36px;
+  background: var(--accent-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 0 0 4px #F7C59F;
+}
+.profile-avatar.has-image {
+  background: #EDEAE4;
+}
+.profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.avatar-upload-badge {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  width: 22px;
+  height: 22px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #37352F;
+  color: #FFFFFF;
+  font-size: 12px;
+  line-height: 1;
+}
+.avatar-frame-hint {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: -8px;
+}
+.profile-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-align: center;
+}
+.profile-info {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  text-align: center;
+}
+.stats-row {
+  display: flex;
+  gap: 12px;
+}
+.stat-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 16px;
+  background: var(--bg-card);
+  border-radius: 12px;
+  box-shadow: var(--shadow-small);
+}
+.stat-item .stat-num {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.stat-item .stat-label {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+.menu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  border-radius: 12px;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+.menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.menu-item:active {
+  background: var(--bg-input);
+}
+.menu-item-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.menu-item-text {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--text-primary);
+}
+
+/* ========== Scrollbar Hide ========== */
+.content-wrapper::-webkit-scrollbar,
+.chat-area::-webkit-scrollbar {
+  display: none;
+}
+.content-wrapper,
+.chat-area {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+</style>
+</head>
+<body>
+<div class="app-container">
+
+<!-- ========== 首页 ========== -->
+<div class="page active" id="page-home">
+  <div style="display:flex;justify-content:flex-end;align-items:center;padding:12px 20px 0;flex-shrink:0;">
+    <div class="xiaobao-avatar" title="工友小宝">
+      <svg width="40" height="40" viewBox="0 0 48 48" fill="none">
+        <circle cx="24" cy="26" r="18" fill="#F26430"/>
+        <path d="M12 22C12 14 17 9 24 9C31 9 36 14 36 22V24H33C33 18 29 14 24 14C19 14 15 18 15 24H12V22Z" fill="#FFB380"/>
+        <circle cx="18" cy="27" r="2.4" fill="#FFFFFF"/>
+        <circle cx="30" cy="27" r="2.4" fill="#FFFFFF"/>
+        <circle cx="18.7" cy="27.7" r="1" fill="#37352F"/>
+        <circle cx="30.7" cy="27.7" r="1" fill="#37352F"/>
+        <path d="M19 33C20.5 34.8 22 35.5 24 35.5C26 35.5 27.5 34.8 29 33" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <circle cx="13" cy="31" r="2" fill="#FFB380"/>
+        <circle cx="35" cy="31" r="2" fill="#FFB380"/>
+        <ellipse cx="24" cy="8" rx="12" ry="4" fill="#FFD166"/>
+        <rect x="10" y="7" width="28" height="4" rx="2" fill="#FFD166"/>
+        <rect x="22" y="2" width="4" height="7" rx="1.5" fill="#FFD166"/>
+      </svg>
+      <span class="xiaobao-dot"></span>
+    </div>
+  </div>
+
+  <div class="content-wrapper">
+    <div class="greeting-card">
+      <div class="greeting">嘿，工友</div>
+      <div class="sub-greeting">有啥事儿都能跟我说</div>
+    </div>
+
+    <div class="voice-consult-card" onclick="navigateTo('page-rights')">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M16 2C13.5 2 11.5 4 11.5 6.5V16C11.5 18.5 13.5 20.5 16 20.5C18.5 20.5 20.5 18.5 20.5 16V6.5C20.5 4 18.5 2 16 2Z" fill="white"/><path d="M6 14V16C6 21 10 25 15 25.5V29H10V31H22V29H17V25.5C22 25 26 21 26 16V14H24V16C24 20 20.5 23.5 16 23.5C11.5 23.5 8 20 8 16V14H6Z" fill="white"/></svg>
+      <div class="voice-title">问权益</div>
+      <div class="voice-desc">工资、工伤、合同、社保<br>说出来就行，不用打字</div>
+    </div>
+
+    <div class="secondary-actions">
+      <div class="action-card" onclick="navigateTo('page-talk')">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M14 25C14 25 3 18 3 10.5C3 7 5.5 4.5 8.5 4.5C10.7 4.5 12.5 5.8 14 7.5C15.5 5.8 17.3 4.5 19.5 4.5C22.5 4.5 25 7 25 10.5C25 18 14 25 14 25Z" fill="#F2A6A8"/><path d="M14 25C14 25 3 18 3 10.5C3 7 5.5 4.5 8.5 4.5C10.7 4.5 12.5 5.8 14 7.5C15.5 5.8 17.3 4.5 19.5 4.5C22.5 4.5 25 7 25 10.5C25 18 14 25 14 25Z" stroke="#D4A574" stroke-width="1.5" fill="none"/></svg>
+        <div>
+          <div class="action-title">说心事</div>
+          <div class="action-desc">想家了、压力大<br>随时跟我说</div>
+        </div>
+      </div>
+      <div class="action-card" onclick="navigateTo('page-tools')">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M17 2L26 11L22 15L17 10V2Z" fill="#D4A574"/><path d="M17 2L17 10L22 15L8 29L2 23L17 2Z" stroke="#D4A574" stroke-width="1.5" fill="none"/><rect x="2" y="23" width="6" height="6" rx="1" fill="#D4A574"/></svg>
+        <div>
+          <div class="action-title">找帮助</div>
+          <div class="action-desc">主管电话、报修、班车<br>安全求助都在这</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="quick-access-section">
+      <div class="section-label">常用功能</div>
+      <div class="quick-grid">
+        <div class="quick-item" onclick="navigateTo('page-repair')">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M21 3L15 9L13 7L19 1L21 3Z" fill="#D4A574"/><path d="M14 8L8 14L4 18L6 20L10 16L16 10L14 8Z" stroke="#D4A574" stroke-width="1.5" fill="none"/><rect x="2" y="22" width="8" height="8" rx="1" fill="#D4A574"/></svg>
+          <div class="quick-label">宿舍报修</div>
+        </div>
+        <div class="quick-item" onclick="navigateTo('page-canteen')">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M6 3V11C6 13 7.5 14.5 9.5 14.5V21H11V14.5C13 14.5 14.5 13 14.5 11V3H12.5V9H11V3H9.5V9H8V3H6Z" fill="#D4A574"/><path d="M18 3C16.5 3 15.5 5 15.5 8C15.5 10.5 16.5 12 18 12V21H19.5V3H18Z" fill="#D4A574"/></svg>
+          <div class="quick-label">食堂反馈</div>
+        </div>
+        <div class="quick-item" onclick="navigateTo('page-bus')">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="13" rx="2" stroke="#D4A574" stroke-width="1.5" fill="none"/><path d="M4 11H20" stroke="#D4A574" stroke-width="1.5"/><rect x="6" y="6" width="5" height="3" rx="0.5" fill="#D4A574"/><rect x="13" y="6" width="5" height="3" rx="0.5" fill="#D4A574"/><circle cx="8" cy="19" r="2" fill="#D4A574"/><circle cx="16" cy="19" r="2" fill="#D4A574"/></svg>
+          <div class="quick-label">班车查询</div>
+        </div>
+        <div class="quick-item" onclick="navigateTo('page-safety')">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2L4 5V11C4 16 7.5 20.5 12 22C16.5 20.5 20 16 20 11V5L12 2Z" stroke="#D4A574" stroke-width="1.5" fill="none"/><path d="M9 12L11 14L15 10" stroke="#D4A574" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+          <div class="quick-label">安全教育</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hot-questions-section">
+      <div class="section-label">工友都在问</div>
+      <div class="hot-question-card" onclick="navigateTo('page-rights')">
+        <span class="question-text">老板欠工资不给怎么办？</span>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="#73726E" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="hot-question-card" onclick="navigateTo('page-rights')">
+        <span class="question-text">工地受伤了算不算工伤？</span>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="#73726E" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <div class="tab-item active" onclick="navigateTo('page-home')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 12L12 3L21 12V21H15V15H9V21H3V12Z" fill="#F26430"/></svg>
+      <span class="tab-label">首页</span>
+    </div>
+    <div class="tab-item" onclick="navigateTo('page-worklog')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="5" y="3" width="14" height="18" rx="2" stroke="#73726E" stroke-width="1.5" fill="none"/><path d="M9 3V1.5H15V3" stroke="#73726E" stroke-width="1.5" fill="none"/><path d="M9 8H15M9 12H15M9 16H13" stroke="#73726E" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <span class="tab-label">工单</span>
+    </div>
+    <div class="tab-item" onclick="navigateTo('page-community')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="8" cy="9" r="3" stroke="#73726E" stroke-width="1.5" fill="none"/><circle cx="16" cy="9" r="3" stroke="#73726E" stroke-width="1.5" fill="none"/><path d="M2.5 19C2.5 16 5 14.5 8 14.5C11 14.5 13.5 16 13.5 19" stroke="#73726E" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M13 14.6C13.7 14.5 14.4 14.5 15 14.5C18 14.5 21.5 16 21.5 19" stroke="#73726E" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+      <span class="tab-label">工友之家</span>
+    </div>
+    <div class="tab-item" onclick="navigateTo('page-profile')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#73726E" stroke-width="1.5" fill="none"/><path d="M4 21C4 16 7.5 14 12 14C16.5 14 20 16 20 21" stroke="#73726E" stroke-width="1.5" fill="none"/></svg>
+      <span class="tab-label">我的</span>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 权益咨询对话页 ========== -->
+<div class="page" id="page-rights">
+  <div class="status-bar">
+    <span class="time">9:41</span>
+    <div class="status-icons">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="8" width="3" height="4" rx="1" fill="#37352F"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#37352F"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#37352F"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#37352F"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="#37352F" fill="none"/><rect x="2" y="2" width="18" height="8" rx="1.5" fill="#37352F"/><rect x="22.5" y="3.5" width="2" height="5" rx="1" fill="#37352F"/></svg>
+    </div>
+  </div>
+  <div class="nav-bar">
+    <div class="back-btn" onclick="navigateTo('page-home')">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 4L6 10L12 16" stroke="#37352F" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+    </div>
+    <span class="nav-title">问权益</span>
+    <div class="right-spacer"></div>
+  </div>
+
+  <div class="chat-area" id="chat-rights">
+    <div class="chat-bubble-row">
+      <div class="bot-avatar rights">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 3C8.5 3 7.5 4 7.5 5.5V10C7.5 11.5 8.5 12.5 10 12.5C11.5 12.5 12.5 11.5 12.5 10V5.5C12.5 4 11.5 3 10 3Z" fill="white"/><path d="M4 8V10C4 13 6.5 15.5 9.5 16V18H6V19.5H14V18H10.5V16C13.5 15.5 16 13 16 10V8H14.5V10C14.5 12.2 12.5 14 10 14C7.5 14 5.5 12.2 5.5 10V8H4Z" fill="white"/></svg>
+      </div>
+      <div class="bot-message">
+        <span class="msg-text">嘿，有啥事儿你说就行，工资、工伤、合同的事我都能帮你看看。</span>
+      </div>
+    </div>
+
+    <div class="chat-bubble-row user">
+      <div class="user-message rights">
+        <span class="msg-text">老板欠我三个月工资了怎么办</span>
+      </div>
+    </div>
+
+    <div class="chat-bubble-row">
+      <div class="bot-avatar rights">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 3C8.5 3 7.5 4 7.5 5.5V10C7.5 11.5 8.5 12.5 10 12.5C11.5 12.5 12.5 11.5 12.5 10V5.5C12.5 4 11.5 3 10 3Z" fill="white"/><path d="M4 8V10C4 13 6.5 15.5 9.5 16V18H6V19.5H14V18H10.5V16C13.5 15.5 16 13 16 10V8H14.5V10C14.5 12.2 12.5 14 10 14C7.5 14 5.5 12.2 5.5 10V8H4Z" fill="white"/></svg>
+      </div>
+      <div class="bot-message">
+        <span class="msg-text">又被拖了？这确实让人窝火。我帮你理一下能怎么做：</span>
+        <span class="msg-step">第一步：先找总包单位反映，总包有监督责任</span>
+        <span class="msg-step">第二步：打12333向劳动监察投诉</span>
+        <span class="msg-step">第三步：申请劳动仲裁（1年时效）</span>
+        <span class="msg-warn">记得留好考勤记录、工资条、要钱聊天记录</span>
+        <span class="msg-disclaimer">以上建议仅供参考，具体情况建议咨询12333或12348</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="voice-input-bar">
+    <div class="spacer" style="flex-direction:column;display:flex;gap:8px;align-items:center;">
+      <div class="voice-mode-switch">
+        <button class="mode-chip active" id="mode-mandarin" onclick="setVoiceMode('mandarin')">普通话</button>
+        <button class="mode-chip" id="mode-minnan" onclick="setVoiceMode('minnan')">闽南话</button>
+      </div>
+      <span style="font-size:11px;color:var(--text-secondary);" id="voice-mode-hint">按住按钮说普通话，说完松手</span>
+    </div>
+    <div class="voice-btn" id="voice-btn-rights">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M14 4C12 4 10.5 5.5 10.5 7.5V15C10.5 17 12 18.5 14 18.5C16 18.5 17.5 17 17.5 15V7.5C17.5 5.5 16 4 14 4Z" fill="white"/><path d="M6 13V15C6 19 9 22.5 13 23V26H9V27.5H19V26H15V23C19 22.5 22 19 22 15V13H20V15C20 18.2 17.2 21 14 21C10.8 21 8 18.2 8 15V13H6Z" fill="white"/></svg>
+      <span class="voice-label">按住说话</span>
+    </div>
+    <div class="spacer" style="display:flex;align-items:center;justify-content:center;">
+      <div class="upload-btn" onclick="document.getElementById('img-upload-input').click()" title="上传图片存证">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" stroke="#F26430" stroke-width="1.5"/><circle cx="9" cy="10" r="1.5" fill="#F26430"/><path d="M3 16L9 12L13 15L17 11L21 14" stroke="#F26430" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+      </div>
+      <input type="file" id="img-upload-input" accept="image/*" style="display:none" onchange="handleImageUpload(this)">
+    </div>
+    <div class="agent-action-bar">
+      <button class="agent-action-btn" onclick="startAgentFlow('worklog')">帮填工单</button>
+      <button class="agent-action-btn" onclick="startAgentFlow('repair')">宿舍报修</button>
+      <button class="agent-action-btn" onclick="startAgentFlow('safety')">安全学习</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 树洞聊天页 ========== -->
+<div class="page" id="page-talk">
+  <div class="status-bar">
+    <span class="time">9:41</span>
+    <div class="status-icons">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="8" width="3" height="4" rx="1" fill="#37352F"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#37352F"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#37352F"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#37352F"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="#37352F" fill="none"/><rect x="2" y="2" width="18" height="8" rx="1.5" fill="#37352F"/><rect x="22.5" y="3.5" width="2" height="5" rx="1" fill="#37352F"/></svg>
+    </div>
+  </div>
+  <div class="nav-bar">
+    <div class="back-btn" onclick="navigateTo('page-home')">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 4L6 10L12 16" stroke="#37352F" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+    </div>
+    <span class="nav-title">说心事</span>
+    <div class="right-spacer"></div>
+  </div>
+
+  <div class="chat-area" id="chat-talk">
+    <div class="chat-bubble-row">
+      <div class="bot-avatar talk">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 17C10 17 3 12.5 3 7.5C3 5 5 3 7.5 3C8.8 3 9.8 3.8 10 5C10.2 3.8 11.2 3 12.5 3C15 3 17 5 17 7.5C17 12.5 10 17 10 17Z" fill="#FFFFFF"/></svg>
+      </div>
+      <div class="bot-message">
+        <span class="msg-text">嘿，我在呢。心里有啥不痛快的，你说就行，我听着。</span>
+      </div>
+    </div>
+
+    <div class="chat-bubble-row user">
+      <div class="user-message talk">
+        <span class="msg-text">半年没回家了，想孩子想得慌，干活也没心思</span>
+      </div>
+    </div>
+
+    <div class="chat-bubble-row">
+      <div class="bot-avatar talk">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 17C10 17 3 12.5 3 7.5C3 5 5 3 7.5 3C8.8 3 9.8 3.8 10 5C10.2 3.8 11.2 3 12.5 3C15 3 17 5 17 7.5C17 12.5 10 17 10 17Z" fill="#FFFFFF"/></svg>
+      </div>
+      <div class="bot-message">
+        <span class="msg-text">半年没见孩子了？搁谁身上都一样，这不丢人，也不矫情。换我也得着急。</span>
+        <span class="msg-text">你平时有空跟孩子打个视频不？哪怕说两句话也行。干活的时候想他们，正常。</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="agent-action-bar">
+    <button class="agent-action-btn" onclick="startCopywritingFlow()">文案撰写</button>
+  </div>
+  <div class="text-input-bar">
+    <div class="talk-input-wrap">
+    <input type="text" class="text-input" placeholder="说点啥..." id="talk-input" onkeypress="if(event.key==='Enter')sendMessage('talk')">
+    <button class="send-btn" onclick="sendMessage('talk')">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 9L16 2L9 16L7.5 10.5L2 9Z" fill="white"/></svg>
+    </button>
+    <div class="voice-btn voice-btn-small" id="voice-btn-talk" data-voice-type="talk"><span class="voice-label">按住说话</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 便民工具页 ========== -->
+<div class="page" id="page-tools">
+  <div class="status-bar">
+    <span class="time">9:41</span>
+    <div class="status-icons">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="8" width="3" height="4" rx="1" fill="#37352F"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#37352F"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#37352F"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#37352F"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="#37352F" fill="none"/><rect x="2" y="2" width="18" height="8" rx="1.5" fill="#37352F"/><rect x="22.5" y="3.5" width="2" height="5" rx="1" fill="#37352F"/></svg>
+    </div>
+  </div>
+
+  <div class="nav-bar">
+    <div class="back-btn" onclick="navigateTo('page-home')">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 4L6 10L12 16" stroke="#37352F" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+    </div>
+    <span class="nav-title">找帮助</span>
+    <div class="right-spacer"></div>
+  </div>
+
+  <div class="content-wrapper">
+    <div class="page-title">找帮助</div>
+    <div class="page-subtitle">急事找电话，生活事找工具</div>
+
+    <div class="section-label" style="margin-bottom:10px;">常用电话（点一下就能拨）</div>
+    <div class="phone-list">
+      <a class="phone-item" href="tel:12333">
+        <div class="phone-icon red"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2C8 2 6.5 3.5 6.5 5.5V10C6.5 12 8 13.5 10 13.5C12 13.5 13.5 12 13.5 10V5.5C13.5 3.5 12 2 10 2Z" fill="white"/><path d="M4 8V10C4 13 6.5 15.5 9 16V18H6V19.5H14V18H11V16C13.5 15.5 16 13 16 10V8H14.5V10C14.5 12.2 12.5 14 10 14C7.5 14 5.5 12.2 5.5 10V8H4Z" fill="white"/></svg></div>
+        <div class="phone-texts"><span class="phone-name">12333 劳动监察</span><span class="phone-desc">工资被拖欠，打这个最管用</span></div>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="#73726E" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </a>
+      <a class="phone-item" href="tel:110">
+        <div class="phone-icon red"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 1L3 4V9C3 13.5 6 17.5 10 19C14 17.5 17 13.5 17 9V4L10 1Z" fill="white"/></svg></div>
+        <div class="phone-texts"><span class="phone-name">110 报警</span><span class="phone-desc">遇到危险、冲突、被扣押身份证</span></div>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="#73726E" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </a>
+      <a class="phone-item" href="tel:119">
+        <div class="phone-icon red"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 1C8 1 6.5 2.5 6.5 4.5V9C6.5 11 8 12.5 10 12.5C12 12.5 13.5 11 13.5 9V4.5C13.5 2.5 12 1 10 1Z" fill="white"/><path d="M4 7V9C4 12 6.5 14.5 9 15V17H6V18.5H14V17H11V15C13.5 14.5 16 12 16 9V7H14.5V9C14.5 11.2 12.5 13 10 13C7.5 13 5.5 11.2 5.5 9V7H4Z" fill="white"/></svg></div>
+        <div class="phone-texts"><span class="phone-name">119 火警</span><span class="phone-desc">火灾、被困，别犹豫直接打</span></div>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="#73726E" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </a>
+      <a class="phone-item" href="tel:120">
+        <div class="phone-icon red"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="4" width="16" height="12" rx="2" fill="white"/><rect x="4" y="6" width="5" height="3" rx="0.5" fill="#EB5757"/><path d="M10 9H16M13 6.5V11.5" stroke="#EB5757" stroke-width="1.5"/></svg></div>
+        <div class="phone-texts"><span class="phone-name">120 急救</span><span class="phone-desc">受伤、突发疾病，救人第一</span></div>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="#73726E" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </a>
+      <a class="phone-item" href="tel:12348">
+        <div class="phone-icon orange"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2C7 2 5 4 5 7V13C5 15 6.5 16.5 8.5 16.5V18H11.5V16.5C13.5 16.5 15 15 15 13V7C15 4 13 2 10 2Z" fill="white"/><path d="M7 13H13" stroke="#F26430" stroke-width="1.5"/></svg></div>
+        <div class="phone-texts"><span class="phone-name">12348 法律援助</span><span class="phone-desc">免费法律咨询，政府开的</span></div>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="#73726E" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </a>
+      <a class="phone-item" href="tel:12320">
+        <div class="phone-icon orange"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 4C8.5 4 7.5 5 7.5 6.5V11C7.5 12.5 8.5 13.5 10 13.5C11.5 13.5 12.5 12.5 12.5 11V6.5C12.5 5 11.5 4 10 4Z" fill="white"/><path d="M5 9V11C5 13.5 7 15.5 9 16V18H7V19H13V18H11V16C13 15.5 15 13.5 15 11V9H14V11C14 12.7 12.2 14.3 10 14.3C7.8 14.3 6 12.7 6 11V9H5Z" fill="white"/></svg></div>
+        <div class="phone-texts"><span class="phone-name">12320-5 心理热线</span><span class="phone-desc">心里憋得慌，找人聊聊</span></div>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="#73726E" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </a>
+      <a class="phone-item" href="tel:10000000000" id="phone-foreman">
+        <div class="phone-icon honey"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="5" width="14" height="10" rx="2" fill="white"/><path d="M6 8H8M6 12H14" stroke="#D4A574" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div class="phone-texts"><span class="phone-name">工头 / 班组长</span><span class="phone-desc">点右上角"编辑"存他的号码</span></div>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="#73726E" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </a>
+      <a class="phone-item" href="tel:10000000000" id="phone-manager">
+        <div class="phone-icon honey"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3.5" fill="white"/><path d="M4 17C4 13.5 7 12 10 12C13 12 16 13.5 16 17" fill="white"/></svg></div>
+        <div class="phone-texts"><span class="phone-name">项目主管</span><span class="phone-desc">点右上角"编辑"存他的号码</span></div>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="#73726E" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </a>
+    </div>
+
+    <div class="section-label" style="margin:24px 0 10px;">生活工具</div>
+    <div class="tool-list">
+      <div class="tool-item" onclick="navigateTo('page-repair')">
+        <div class="tool-item-left">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M24 4L18 10L16 8L22 2L24 4Z" fill="#F26430"/><path d="M16 8L8 16L4 20L6 22L10 18L18 10L16 8Z" stroke="#F26430" stroke-width="2" fill="none"/><rect x="2" y="22" width="8" height="8" rx="1.5" fill="#F26430"/></svg>
+          <div class="tool-item-texts">
+            <span class="tool-item-title">宿舍报修</span>
+            <span class="tool-item-desc">空调坏了、漏水、断电都能报</span>
+          </div>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="#73726E" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+
+      <div class="tool-item" onclick="navigateTo('page-canteen')">
+        <div class="tool-item-left">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M8 4V14C8 17 10 19 12.5 19V28H14.5V19C17 19 19 17 19 14V4H16.5V12H14.5V4H12.5V12H10.5V4H8Z" fill="#F26430"/><path d="M24 4C22 4 20.5 6.5 20.5 10C20.5 13 22 15.5 24 15.5V28H26V4H24Z" fill="#F26430"/></svg>
+          <div class="tool-item-texts">
+            <span class="tool-item-title">食堂反馈</span>
+            <span class="tool-item-desc">菜不好吃、不卫生直接说</span>
+          </div>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="#73726E" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+
+      <div class="tool-item" onclick="navigateTo('page-bus')">
+        <div class="tool-item-left">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><rect x="5" y="5" width="22" height="18" rx="2" stroke="#F26430" stroke-width="2" fill="none"/><path d="M5 15H27" stroke="#F26430" stroke-width="2"/><rect x="8" y="8" width="6" height="4" rx="0.5" fill="#F26430"/><rect x="18" y="8" width="6" height="4" rx="0.5" fill="#F26430"/><circle cx="10" cy="26" r="2.5" fill="#F26430"/><circle cx="22" cy="26" r="2.5" fill="#F26430"/></svg>
+          <div class="tool-item-texts">
+            <span class="tool-item-title">班车查询</span>
+            <span class="tool-item-desc">看看今天班车几点到</span>
+          </div>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="#73726E" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+
+      <div class="tool-item" onclick="navigateTo('page-safety')">
+        <div class="tool-item-left">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M16 3L6 6V14C6 20 10 27 16 29C22 27 26 20 26 14V6L16 3Z" stroke="#F26430" stroke-width="2" fill="none"/><path d="M12 16L15 19L20 13" stroke="#F26430" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+          <div class="tool-item-texts">
+            <span class="tool-item-title">安全教育</span>
+            <span class="tool-item-desc">不到1分钟，先看再上岗</span>
+          </div>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="#73726E" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <div class="tab-item" onclick="navigateTo('page-home')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 12L12 3L21 12V21H15V15H9V21H3V12Z" stroke="#73726E" stroke-width="1.5" fill="none"/></svg>
+      <span class="tab-label">首页</span>
+    </div>
+    <div class="tab-item" onclick="navigateTo('page-worklog')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="5" y="3" width="14" height="18" rx="2" stroke="#73726E" stroke-width="1.5" fill="none"/><path d="M9 3V1.5H15V3" stroke="#73726E" stroke-width="1.5" fill="none"/><path d="M9 8H15M9 12H15M9 16H13" stroke="#73726E" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <span class="tab-label">工单</span>
+    </div>
+    <div class="tab-item" onclick="navigateTo('page-community')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="8" cy="9" r="3" stroke="#73726E" stroke-width="1.5" fill="none"/><circle cx="16" cy="9" r="3" stroke="#73726E" stroke-width="1.5" fill="none"/><path d="M2.5 19C2.5 16 5 14.5 8 14.5C11 14.5 13.5 16 13.5 19" stroke="#73726E" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M13 14.6C13.7 14.5 14.4 14.5 15 14.5C18 14.5 21.5 16 21.5 19" stroke="#73726E" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+      <span class="tab-label">工友之家</span>
+    </div>
+    <div class="tab-item" onclick="navigateTo('page-profile')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#73726E" stroke-width="1.5" fill="none"/><path d="M4 21C4 16 7.5 14 12 14C16.5 14 20 16 20 21" stroke="#73726E" stroke-width="1.5" fill="none"/></svg>
+      <span class="tab-label">我的</span>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 报修表单页 ========== -->
+<div class="page" id="page-repair">
+  <div class="status-bar">
+    <span class="time">9:41</span>
+    <div class="status-icons">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="8" width="3" height="4" rx="1" fill="#37352F"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#37352F"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#37352F"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#37352F"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="#37352F" fill="none"/><rect x="2" y="2" width="18" height="8" rx="1.5" fill="#37352F"/><rect x="22.5" y="3.5" width="2" height="5" rx="1" fill="#37352F"/></svg>
+    </div>
+  </div>
+  <div class="nav-bar">
+    <div class="back-btn" onclick="navigateTo('page-tools')">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 4L6 10L12 16" stroke="#37352F" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+    </div>
+    <span class="nav-title">宿舍报修</span>
+    <div class="right-spacer"></div>
+  </div>
+
+  <div class="content-wrapper">
+    <div class="form-section">
+      <label class="form-label">报修类型</label>
+      <div class="chips-row">
+        <div class="chip selected" onclick="selectChip(this)">水电</div>
+        <div class="chip unselected" onclick="selectChip(this)">门窗</div>
+        <div class="chip unselected" onclick="selectChip(this)">家具</div>
+        <div class="chip unselected" onclick="selectChip(this)">其他</div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <label class="form-label">拍照（选填）</label>
+      <div class="photo-upload" onclick="alert('拍照功能开发中')">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="3" y="7" width="22" height="16" rx="2" stroke="#73726E" stroke-width="1.5" fill="none"/><circle cx="14" cy="15" r="5" stroke="#73726E" stroke-width="1.5" fill="none"/><path d="M9 7L11 4H17L19 7" stroke="#73726E" stroke-width="1.5" fill="none"/></svg>
+        <span class="photo-label">拍个照</span>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <label class="form-label">说说啥问题</label>
+      <textarea class="desc-box" placeholder="比如：空调不制冷了，或者水龙头一直漏水"></textarea>
+      <div class="voice-hint">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2C6.5 2 5.5 3 5.5 4.5V8C5.5 9.5 6.5 10.5 8 10.5C9.5 10.5 10.5 9.5 10.5 8V4.5C10.5 3 9.5 2 8 2Z" fill="#F26430"/><path d="M3 7V8C3 10.5 5 12.5 7.5 12.8V15H5V16H11V15H8.5V12.8C11 12.5 13 10.5 13 8V7H12V8C12 10 10 12 8 12C6 12 4 10 4 8V7H3Z" fill="#F26430"/></svg>
+        <span class="hint-text">不会打字？可以按住语音说</span>
+      </div>
+    </div>
+
+    <button class="submit-btn" onclick="alert('报修已提交，后勤会尽快处理')">提交报修</button>
+  </div>
+</div>
+
+<!-- ========== 个人中心页 ========== -->
+<div class="page" id="page-profile">
+  <div class="status-bar">
+    <span class="time">9:41</span>
+    <div class="status-icons">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="8" width="3" height="4" rx="1" fill="#37352F"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#37352F"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#37352F"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#37352F"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="#37352F" fill="none"/><rect x="2" y="2" width="18" height="8" rx="1.5" fill="#37352F"/><rect x="22.5" y="3.5" width="2" height="5" rx="1" fill="#37352F"/></svg>
+    </div>
+  </div>
+
+  <div class="profile-header">
+    <div class="profile-avatar" id="profile-avatar" onclick="document.getElementById('avatar-file').click()" title="上传头像">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="12" r="6" stroke="#FFFFFF" stroke-width="2" fill="none"/><path d="M6 31C6 24 11 21 18 21C25 21 30 24 30 31" stroke="#FFFFFF" stroke-width="2" fill="none"/></svg>
+    </div>
+    <input type="file" id="avatar-file" accept="image/*" style="display:none" onchange="uploadAvatar(this)">
+    <div class="avatar-frame-hint">点击头像上传照片</div>
+    <div class="profile-name">张师傅</div>
+    <div class="profile-info">钢筋工 · 中建三局XX项目</div>
+  </div>
+
+  <div class="content-wrapper">
+    <div class="stats-row">
+      <div class="stat-item">
+        <span class="stat-num">3</span>
+        <span class="stat-label">咨询记录</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">1</span>
+        <span class="stat-label">报修记录</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">7</span>
+        <span class="stat-label">工友圈</span>
+      </div>
+    </div>
+
+    <div class="menu-list">
+      <div class="menu-item">
+        <div class="menu-item-left">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#73726E" stroke-width="1.5" fill="none"/><path d="M10 5V10L13 12" stroke="#73726E" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <span class="menu-item-text">咨询历史</span>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="#73726E" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="menu-item">
+        <div class="menu-item-left">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5H17V15H3V5Z" stroke="#73726E" stroke-width="1.5" fill="none"/><path d="M3 5L10 11L17 5" stroke="#73726E" stroke-width="1.5" fill="none"/></svg>
+          <span class="menu-item-text">意见反馈</span>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="#73726E" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="menu-item">
+        <div class="menu-item-left">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#73726E" stroke-width="1.5" fill="none"/><path d="M10 9V14" stroke="#73726E" stroke-width="1.5" stroke-linecap="round"/><circle cx="10" cy="6.5" r="1" fill="#73726E"/></svg>
+          <span class="menu-item-text">关于我们</span>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="#73726E" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <div class="tab-item" onclick="navigateTo('page-home')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 12L12 3L21 12V21H15V15H9V21H3V12Z" stroke="#73726E" stroke-width="1.5" fill="none"/></svg>
+      <span class="tab-label">首页</span>
+    </div>
+    <div class="tab-item" onclick="navigateTo('page-worklog')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="5" y="3" width="14" height="18" rx="2" stroke="#73726E" stroke-width="1.5" fill="none"/><path d="M9 3V1.5H15V3" stroke="#73726E" stroke-width="1.5" fill="none"/><path d="M9 8H15M9 12H15M9 16H13" stroke="#73726E" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <span class="tab-label">工单</span>
+    </div>
+    <div class="tab-item" onclick="navigateTo('page-community')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="8" cy="9" r="3" stroke="#73726E" stroke-width="1.5" fill="none"/><circle cx="16" cy="9" r="3" stroke="#73726E" stroke-width="1.5" fill="none"/><path d="M2.5 19C2.5 16 5 14.5 8 14.5C11 14.5 13.5 16 13.5 19" stroke="#73726E" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M13 14.6C13.7 14.5 14.4 14.5 15 14.5C18 14.5 21.5 16 21.5 19" stroke="#73726E" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+      <span class="tab-label">工友之家</span>
+    </div>
+    <div class="tab-item active">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="#F26430"/><path d="M4 21C4 16 7.5 14 12 14C16.5 14 20 16 20 21" fill="#F26430"/></svg>
+      <span class="tab-label">我的</span>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 班车查询页 ========== -->
+<div class="page" id="page-bus">
+  <div class="status-bar">
+    <span class="time">9:41</span>
+    <div class="status-icons">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="8" width="3" height="4" rx="1" fill="#37352F"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#37352F"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#37352F"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#37352F"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="#37352F" fill="none"/><rect x="2" y="2" width="18" height="8" rx="1.5" fill="#37352F"/><rect x="22.5" y="3.5" width="2" height="5" rx="1" fill="#37352F"/></svg>
+    </div>
+  </div>
+  <div class="nav-bar">
+    <div class="back-btn" onclick="navigateTo('page-tools')">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 4L6 10L12 16" stroke="#37352F" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+    </div>
+    <span class="nav-title">班车查询</span>
+    <div class="right-spacer"></div>
+  </div>
+
+  <div class="content-wrapper">
+    <div class="page-title">工地班车</div>
+    <div class="page-subtitle">1号线路 · 项目部 ⇄ 工人村</div>
+
+    <div class="bus-card">
+      <div class="bus-route-header">
+        <span class="bus-badge">1号线</span>
+        <span class="bus-route-name">工人村 → 项目部（早班）</span>
+      </div>
+      <div class="bus-timeline">
+        <div class="bus-stop">
+          <span class="bus-stop-dot"></span>
+          <span class="bus-stop-name">工人村东门</span>
+          <span class="bus-stop-time">06:10</span>
+        </div>
+        <div class="bus-stop">
+          <span class="bus-stop-dot"></span>
+          <span class="bus-stop-name">菜市场站</span>
+          <span class="bus-stop-time">06:25</span>
+        </div>
+        <div class="bus-stop">
+          <span class="bus-stop-dot"></span>
+          <span class="bus-stop-name">镇中学站</span>
+          <span class="bus-stop-time">06:40</span>
+        </div>
+        <div class="bus-stop">
+          <span class="bus-stop-dot"></span>
+          <span class="bus-stop-name">项目部门口</span>
+          <span class="bus-stop-time">06:55</span>
+        </div>
+      </div>
+      <div class="bus-note">每30分钟一班 · 末班 18:30 · 司机老王 138****6672</div>
+    </div>
+
+    <div class="bus-card">
+      <div class="bus-route-header">
+        <span class="bus-badge">1号线</span>
+        <span class="bus-route-name">项目部 → 工人村（晚班）</span>
+      </div>
+      <div class="bus-timeline">
+        <div class="bus-stop">
+          <span class="bus-stop-dot"></span>
+          <span class="bus-stop-name">项目部门口</span>
+          <span class="bus-stop-time">17:30</span>
+        </div>
+        <div class="bus-stop">
+          <span class="bus-stop-dot"></span>
+          <span class="bus-stop-name">镇中学站</span>
+          <span class="bus-stop-time">17:45</span>
+        </div>
+        <div class="bus-stop">
+          <span class="bus-stop-dot"></span>
+          <span class="bus-stop-name">菜市场站</span>
+          <span class="bus-stop-time">18:00</span>
+        </div>
+        <div class="bus-stop">
+          <span class="bus-stop-dot"></span>
+          <span class="bus-stop-name">工人村东门</span>
+          <span class="bus-stop-time">18:15</span>
+        </div>
+      </div>
+      <div class="bus-note">加班有加班车，跟工头说一声就行</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 安全教育页 ========== -->
+<div class="page" id="page-safety">
+  <div class="status-bar">
+    <span class="time">9:41</span>
+    <div class="status-icons">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="8" width="3" height="4" rx="1" fill="#37352F"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#37352F"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#37352F"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#37352F"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="#37352F" fill="none"/><rect x="2" y="2" width="18" height="8" rx="1.5" fill="#37352F"/><rect x="22.5" y="3.5" width="2" height="5" rx="1" fill="#37352F"/></svg>
+    </div>
+  </div>
+  <div class="nav-bar">
+    <div class="back-btn" onclick="navigateTo('page-tools')">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 4L6 10L12 16" stroke="#37352F" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+    </div>
+    <span class="nav-title">安全教育</span>
+    <div class="right-spacer"></div>
+  </div>
+
+  <div class="content-wrapper">
+    <div class="page-title">高处作业安全微课</div>
+    <div class="page-subtitle">47秒看重点，先看再上岗</div>
+
+    <div class="video-card">
+      <div class="video-wrapper">
+        <video id="video-height" controls preload="metadata" playsinline webkit-playsinline>
+          你的浏览器不支持在线视频
+        </video>
+      </div>
+      <div class="video-info">
+        <span class="video-title">高处作业安全规范</span>
+        <span class="video-desc">安全帽戴牢、安全带系好、临边防护做到位。上岗前看一遍，关键时候护平安。</span>
+      </div>
+    </div>
+
+    <div class="safety-tips-card">
+      <div class="section-label">视频看不了？记住这几条</div>
+      <div class="tip-row"><span class="tip-num">1</span><span>上岗三件套：安全帽、安全带、防滑鞋，缺一不可</span></div>
+      <div class="tip-row"><span class="tip-num">2</span><span>安全带要高挂低用，系在牢靠的固定点上</span></div>
+      <div class="tip-row"><span class="tip-num">3</span><span>临边、洞口先检查护栏和盖板，防护不到位不上工</span></div>
+      <div class="tip-row"><span class="tip-num">4</span><span>六级大风、大雨、大雾天，停止露天高处作业</span></div>
+      <div class="tip-row"><span class="tip-num">5</span><span>工具装袋，材料放稳，严禁从高处往下抛东西</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 食堂反馈页 ========== -->
+<div class="page" id="page-canteen">
+  <div class="status-bar">
+    <span class="time">9:41</span>
+    <div class="status-icons">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="8" width="3" height="4" rx="1" fill="#37352F"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#37352F"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#37352F"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#37352F"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="#37352F" fill="none"/><rect x="2" y="2" width="18" height="8" rx="1.5" fill="#37352F"/><rect x="22.5" y="3.5" width="2" height="5" rx="1" fill="#37352F"/></svg>
+    </div>
+  </div>
+  <div class="nav-bar">
+    <div class="back-btn" onclick="navigateTo('page-tools')">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 4L6 10L12 16" stroke="#37352F" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+    </div>
+    <span class="nav-title">食堂反馈</span>
+    <div class="right-spacer"></div>
+  </div>
+
+  <div class="content-wrapper">
+    <div class="page-title">食堂反馈</div>
+    <div class="page-subtitle">伙食有啥问题，直接说，帮你转给后勤</div>
+
+    <div class="form-section">
+      <label class="form-label">反馈类型</label>
+      <div class="chips-row">
+        <div class="chip selected" onclick="selectChip(this)">饭菜质量</div>
+        <div class="chip unselected" onclick="selectChip(this)">卫生问题</div>
+        <div class="chip unselected" onclick="selectChip(this)">价格问题</div>
+        <div class="chip unselected" onclick="selectChip(this)">其他</div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <label class="form-label">具体说说</label>
+      <textarea class="desc-box" id="canteen-desc" placeholder="比如：今天的肉有异味，或者米饭没煮熟"></textarea>
+    </div>
+
+    <button class="submit-btn" onclick="submitCanteen()">提交反馈</button>
+    <div id="canteen-history"></div>
+  </div>
+</div>
+
+<!-- ========== 我的工单/上工记录页 ========== -->
+<div class="page" id="page-worklog">
+  <div class="status-bar">
+    <span class="time">9:41</span>
+    <div class="status-icons">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="8" width="3" height="4" rx="1" fill="#37352F"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#37352F"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#37352F"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#37352F"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="#37352F" fill="none"/><rect x="2" y="2" width="18" height="8" rx="1.5" fill="#37352F"/><rect x="22.5" y="3.5" width="2" height="5" rx="1" fill="#37352F"/></svg>
+    </div>
+  </div>
+  <div class="nav-bar">
+    <div class="back-btn" onclick="navigateTo('page-home')">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 4L6 10L12 16" stroke="#37352F" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+    </div>
+    <span class="nav-title">我的工单</span>
+    <div class="right-spacer"></div>
+  </div>
+
+  <div class="content-wrapper">
+    <div class="page-title">上工记录</div>
+    <div class="page-subtitle">记好账，防赖账 · 自动保存在手机里</div>
+
+    <div class="worklog-summary" id="worklog-summary">
+      <div class="summary-item"><span class="summary-num" id="wl-total-days">0</span><span class="summary-label">上工天数</span></div>
+      <div class="summary-item"><span class="summary-num" id="wl-total-hours">0</span><span class="summary-label">总工时</span></div>
+      <div class="summary-item"><span class="summary-num" id="wl-total-wage">¥0</span><span class="summary-label">约定工资</span></div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-row">
+        <label class="form-label">日期</label>
+        <input type="date" class="wl-input" id="wl-date">
+      </div>
+      <div class="form-row">
+        <label class="form-label">在哪儿干活</label>
+        <input type="text" class="wl-input" id="wl-place" placeholder="比如：3号楼绑钢筋">
+      </div>
+      <div class="form-row">
+        <label class="form-label">干了几个小时</label>
+        <input type="number" class="wl-input" id="wl-hours" placeholder="比如：9.5">
+      </div>
+      <div class="form-row">
+        <label class="form-label">当天约定工资</label>
+        <input type="number" class="wl-input" id="wl-wage" placeholder="比如：350（元）">
+      </div>
+      <button class="submit-btn" onclick="addWorkLog()">记一笔</button>
+    </div>
+
+    <div class="section-label" style="margin:20px 0 10px;">合同存证</div>
+    <div class="contract-card">
+      <input type="file" id="contract-file" accept="image/*" style="display:none" onchange="uploadContract(this)">
+      <div class="contract-preview" id="contract-preview" onclick="document.getElementById('contract-file').click()">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="3" y="5" width="22" height="18" rx="2" stroke="#D4A574" stroke-width="1.5" fill="none"/><path d="M3 12H25" stroke="#D4A574" stroke-width="1.5"/><circle cx="8" cy="8.5" r="1.5" fill="#D4A574"/><path d="M9 19L13 15L16 18L20 14" stroke="#D4A574" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+        <span id="contract-label">拍合同照片存这儿（当证据）</span>
+      </div>
+      <div class="contract-img-wrap" id="contract-img-wrap" style="display:none;">
+        <img id="contract-img" onclick="document.getElementById('contract-file').click()">
+      </div>
+    </div>
+
+    <div class="section-label" style="margin:20px 0 10px;">上工记录</div>
+    <div id="worklog-list"></div>
+    <button class="evidence-btn" onclick="exportEvidence()">生成证据截图（防赖账）</button>
+  </div>
+
+  <div class="tab-bar">
+    <div class="tab-item" onclick="navigateTo('page-home')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 12L12 3L21 12V21H15V15H9V21H3V12Z" stroke="#73726E" stroke-width="1.5" fill="none"/></svg>
+      <span class="tab-label">首页</span>
+    </div>
+    <div class="tab-item active">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="5" y="3" width="14" height="18" rx="2" stroke="#F26430" stroke-width="1.5" fill="none"/><path d="M9 3V1.5H15V3" stroke="#F26430" stroke-width="1.5" fill="none"/><path d="M9 8H15M9 12H15M9 16H13" stroke="#F26430" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <span class="tab-label">工单</span>
+    </div>
+    <div class="tab-item" onclick="navigateTo('page-community')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="8" cy="9" r="3" stroke="#73726E" stroke-width="1.5" fill="none"/><circle cx="16" cy="9" r="3" stroke="#73726E" stroke-width="1.5" fill="none"/><path d="M2.5 19C2.5 16 5 14.5 8 14.5C11 14.5 13.5 16 13.5 19" stroke="#73726E" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M13 14.6C13.7 14.5 14.4 14.5 15 14.5C18 14.5 21.5 16 21.5 19" stroke="#73726E" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+      <span class="tab-label">工友之家</span>
+    </div>
+    <div class="tab-item" onclick="navigateTo('page-profile')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#73726E" stroke-width="1.5" fill="none"/><path d="M4 21C4 16 7.5 14 12 14C16.5 14 20 16 20 21" stroke="#73726E" stroke-width="1.5" fill="none"/></svg>
+      <span class="tab-label">我的</span>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 工友之家社区页 ========== -->
+<div class="page" id="page-community">
+  <div class="status-bar">
+    <span class="time">9:41</span>
+    <div class="status-icons">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="8" width="3" height="4" rx="1" fill="#37352F"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#37352F"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#37352F"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#37352F"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="#37352F" fill="none"/><rect x="2" y="2" width="18" height="8" rx="1.5" fill="#37352F"/><rect x="22.5" y="3.5" width="2" height="5" rx="1" fill="#37352F"/></svg>
+    </div>
+  </div>
+  <div class="nav-bar">
+    <div class="back-btn" onclick="navigateTo('page-home')">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 4L6 10L12 16" stroke="#37352F" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+    </div>
+    <span class="nav-title">工友之家</span>
+    <div class="right-spacer"></div>
+  </div>
+
+  <div class="content-wrapper">
+    <div class="community-post-box">
+      <textarea class="community-input" id="community-input" placeholder="跟工友唠两句…今天干活咋样？"></textarea>
+      <div class="community-actions">
+        <div class="community-tag-row">
+          <span class="community-tag selected" onclick="selectCommunityTag(this)">日常</span>
+          <span class="community-tag" onclick="selectCommunityTag(this)">求助</span>
+          <span class="community-tag" onclick="selectCommunityTag(this)">找工作</span>
+          <span class="community-tag" onclick="selectCommunityTag(this)">晒工资</span>
+        </div>
+        <button class="community-post-btn" onclick="postCommunity()">发出去</button>
+      </div>
+    </div>
+
+    <div id="community-feed"></div>
+  </div>
+
+  <div class="tab-bar">
+    <div class="tab-item" onclick="navigateTo('page-home')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 12L12 3L21 12V21H15V15H9V21H3V12Z" stroke="#73726E" stroke-width="1.5" fill="none"/></svg>
+      <span class="tab-label">首页</span>
+    </div>
+    <div class="tab-item" onclick="navigateTo('page-worklog')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="5" y="3" width="14" height="18" rx="2" stroke="#73726E" stroke-width="1.5" fill="none"/><path d="M9 3V1.5H15V3" stroke="#73726E" stroke-width="1.5" fill="none"/><path d="M9 8H15M9 12H15M9 16H13" stroke="#73726E" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <span class="tab-label">工单</span>
+    </div>
+    <div class="tab-item active">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="8" cy="9" r="3" stroke="#F26430" stroke-width="1.5" fill="none"/><circle cx="16" cy="9" r="3" stroke="#F26430" stroke-width="1.5" fill="none"/><path d="M2.5 19C2.5 16 5 14.5 8 14.5C11 14.5 13.5 16 13.5 19" stroke="#F26430" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M13 14.6C13.7 14.5 14.4 14.5 15 14.5C18 14.5 21.5 16 21.5 19" stroke="#F26430" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+      <span class="tab-label">工友之家</span>
+    </div>
+    <div class="tab-item" onclick="navigateTo('page-profile')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#73726E" stroke-width="1.5" fill="none"/><path d="M4 21C4 16 7.5 14 12 14C16.5 14 20 16 20 21" stroke="#73726E" stroke-width="1.5" fill="none"/></svg>
+      <span class="tab-label">我的</span>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+// ========== Page Navigation ==========
+function navigateTo(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById(pageId);
+  if (target) {
+    target.classList.add('active');
+    // Scroll content to top
+    const contentWrapper = target.querySelector('.content-wrapper, .chat-area');
+    if (contentWrapper) contentWrapper.scrollTop = 0;
+    // Update tab bar active states
+    updateTabBarActive(pageId);
+  }
+}
+
+function updateTabBarActive(pageId) {
+  // Remove all active states
+  document.querySelectorAll('.tab-bar .tab-item').forEach(t => t.classList.remove('active'));
+  // Set active based on page
+  const tabMap = {
+    'page-home': 0,
+    'page-worklog': 1,
+    'page-community': 2,
+    'page-profile': 3
+  };
+  // Find all tab bars and update the one on the active page
+  const activePage = document.getElementById(pageId);
+  if (activePage) {
+    const tabBar = activePage.querySelector('.tab-bar');
+    if (tabBar) {
+      const items = tabBar.querySelectorAll('.tab-item');
+      const idx = tabMap[pageId];
+      if (idx !== undefined && items[idx]) {
+        items[idx].classList.add('active');
+      }
+    }
+  }
+}
+
+// ========== Chip Selection ==========
+function selectChip(element) {
+  const parent = element.parentElement;
+  parent.querySelectorAll('.chip').forEach(c => {
+    c.classList.remove('selected');
+    c.classList.add('unselected');
+  });
+  element.classList.remove('unselected');
+  element.classList.add('selected');
+}
+
+// ========== 后端对话 ==========
+const API_BASE = (location.protocol === 'file:') ? 'http://192.168.31.9:8000' : 'http://127.0.0.1:8000';
+
+async function sendMessage(type) {
+  const input = document.getElementById(type + '-input');
+  if (!input || !input.value.trim()) return;
+  const userMsg = input.value.trim();
+  input.value = '';
+  dispatchUserMessage(type, userMsg);
+}
+
+let pendingAgentFlow = null;
+
+function addAgentBotMessage(type, text, htmlExtra = '') {
+  const chatArea = document.getElementById('chat-' + type);
+  const row = document.createElement('div');
+  row.className = 'chat-bubble-row';
+  row.innerHTML = `<div class="bot-avatar ${type === 'talk' ? 'talk' : 'rights'}">${avatarIcon(type === 'talk' ? 'talk' : 'rights')}</div><div class="bot-message"><span class="msg-text">${escapeHtml(text)}</span>${htmlExtra}</div>`;
+  chatArea.appendChild(row);
+  chatArea.scrollTop = chatArea.scrollHeight;
+}
+
+function startAgentFlow(flow) {
+  if (flow === 'safety') return renderSafetyAgentMessage();
+  pendingAgentFlow = { type: 'rights', flow };
+  const prompts = {
+    worklog: '我来帮你填上工记录。请告诉我：哪天、在哪干活、干了几小时、约定工资多少？一次说不全也没关系。',
+    repair: '我来帮你登记宿舍报修。请告诉我：哪里坏了、具体什么情况、是否影响正常居住？也可以直接发照片。'
+  };
+  addAgentBotMessage('rights', prompts[flow]);
+}
+
+function startCopywritingFlow() {
+  pendingAgentFlow = { type: 'talk', flow: 'copywriting' };
+  addAgentBotMessage('talk', '你想对谁说？想表达什么？比如“想对女儿说想她了，提醒她好好吃饭”。');
+}
+
+function renderSafetyAgentMessage() {
+  const chatArea = document.getElementById('chat-rights');
+  const row = document.createElement('div');
+  row.className = 'chat-bubble-row';
+  row.innerHTML = `<div class="bot-avatar rights">${avatarIcon('rights')}</div><div class="bot-message"><span class="msg-text">这是今天的安全学习：高处作业安全规范。看完再上岗，安全带要高挂低用。</span><video controls playsinline webkit-playsinline style="width:100%;border-radius:10px;margin-top:8px"><source src="${API_BASE}/videos/safety_height.mp4" type="video/mp4"></video></div>`;
+  chatArea.appendChild(row);
+  chatArea.scrollTop = chatArea.scrollHeight;
+}
+
+async function handlePendingAgentFlow(type, userMsg) {
+  const flow = pendingAgentFlow;
+  pendingAgentFlow = null;
+  const chatArea = document.getElementById('chat-' + type);
+  const userRow = document.createElement('div');
+  userRow.className = 'chat-bubble-row user';
+  userRow.innerHTML = `<div class="user-message ${type}"><span class="msg-text">${escapeHtml(userMsg)}</span></div>`;
+  chatArea.appendChild(userRow);
+  if (flow.flow === 'safety') return renderSafetyAgentMessage();
+  if (flow.flow === 'worklog') {
+    const list = JSON.parse(localStorage.getItem('gygj_ai_worklogs') || '[]');
+    list.unshift({ note: userMsg, time: new Date().toLocaleString('zh-CN') });
+    localStorage.setItem('gygj_ai_worklogs', JSON.stringify(list));
+    return addAgentBotMessage(type, '已经帮你保存这条上工信息了。之后可以在“我的工单”里继续补充日期、地点、工时和工资。');
+  }
+  if (flow.flow === 'repair') {
+    const list = JSON.parse(localStorage.getItem('gygj_repairs') || '[]');
+    list.unshift({ type: 'AI登记', desc: userMsg, time: new Date().toLocaleString('zh-CN'), status: '待处理' });
+    localStorage.setItem('gygj_repairs', JSON.stringify(list));
+    return addAgentBotMessage(type, '报修信息已经登记好了，后勤处理前请先注意安全。');
+  }
+  if (flow.flow === 'copywriting') {
+    const prompt = `请帮我写一段真诚、口语化、适合发给家人的短消息。用户想表达：${userMsg}。只输出成稿，不要解释。`;
+    try {
+      const base = typeof ensureApiBase === 'function' ? await ensureApiBase() : API_BASE;
+      const resp = await fetch(base + '/api/chat', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({message: prompt, screen: 'mental', user_id: getOrCreateUserId()}) });
+      const data = await resp.json();
+      const text = data.reply || '我先帮你整理成一段：' + userMsg;
+      return addAgentBotMessage(type, text, `<button class="agent-action-btn" onclick="copyGeneratedText(this)">复制文案</button>`);
+    } catch (_) {
+      return addAgentBotMessage(type, '文案服务暂时没接通，你可以先把想说的话发给我，我再帮你整理。');
+    }
+  }
+}
+
+function copyGeneratedText(button) {
+  const text = button.parentElement.querySelector('.msg-text')?.textContent || '';
+  navigator.clipboard?.writeText(text).then(() => { button.textContent = '已复制'; }).catch(() => { button.textContent = '请长按复制'; });
+}
+async function dispatchUserMessage(type, userMsg) {
+  if (pendingAgentFlow && pendingAgentFlow.type === type) return handlePendingAgentFlow(type, userMsg);
+  const chatArea = document.getElementById('chat-' + type);
+  const userRow = document.createElement('div');
+  userRow.className = 'chat-bubble-row user';
+  userRow.innerHTML = `<div class="user-message ${type}"><span class="msg-text">${escapeHtml(userMsg)}</span></div>`;
+  chatArea.appendChild(userRow);
+  chatArea.scrollTop = chatArea.scrollHeight;
+
+  const typingRow = appendTyping(chatArea, type);
+  try {
+    const resp = await fetch(API_BASE + '/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: userMsg,
+        screen: type === 'rights' ? 'rights' : 'mental',
+        user_id: getOrCreateUserId()
+      })
+    });
+    const data = await resp.json();
+    typingRow.remove();
+    appendBotReply(chatArea, data.reply || '（没听清，再说一遍）', data.law_refs, type);
+    if (data.transfer) appendTransferCard(chatArea, data.transfer);
+  } catch (err) {
+    typingRow.remove();
+    appendBotReply(chatArea, '网络连不上了，等会儿再试试。着急的事直接打12333。', null, type);
+  }
+}
+
+function appendTyping(chatArea, type) {
+  const row = document.createElement('div');
+  row.className = 'chat-bubble-row';
+  const cls = type === 'rights' ? 'rights' : 'talk';
+  row.innerHTML = `<div class="bot-avatar ${cls}">${avatarIcon(cls)}</div><div class="bot-message"><span class="msg-text"><span class="typing-dots"><i></i><i></i><i></i></span></span></div>`;
+  chatArea.appendChild(row);
+  chatArea.scrollTop = chatArea.scrollHeight;
+  return row;
+}
+
+function appendBotReply(chatArea, text, lawRefs, type) {
+  const row = document.createElement('div');
+  row.className = 'chat-bubble-row';
+  const cls = type === 'rights' ? 'rights' : 'talk';
+  const safe = escapeHtml(text);
+  const html = safe.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+  let inner = `<span class="msg-text">${html}</span>`;
+  if (lawRefs && lawRefs.length) {
+    inner += `<span class="msg-disclaimer">依据：${lawRefs.map(r => escapeHtml(r.source || '')).filter(Boolean).join('、')}</span>`;
+  }
+  inner += `<span class="msg-disclaimer">仅供参考，紧急情况打12333或12348</span>`;
+  row.innerHTML = `<div class="bot-avatar ${cls}">${avatarIcon(cls)}</div><div class="bot-message">${inner}</div>`;
+  chatArea.appendChild(row);
+  chatArea.scrollTop = chatArea.scrollHeight;
+}
+
+function appendTransferCard(chatArea, transfer) {
+  const row = document.createElement('div');
+  row.className = 'chat-bubble-row';
+  row.innerHTML = `<div class="bot-avatar rights">${avatarIcon('rights')}</div><div class="bot-message">
+    <span class="msg-warn">建议转${escapeHtml(transfer.target || '人工')}: ${escapeHtml(transfer.phone || '')}</span>
+  </div>`;
+  chatArea.appendChild(row);
+  chatArea.scrollTop = chatArea.scrollHeight;
+}
+
+function avatarIcon(cls) {
+  if (cls === 'rights') {
+    return '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 3C8.5 3 7.5 4 7.5 5.5V10C7.5 11.5 8.5 12.5 10 12.5C11.5 12.5 12.5 11.5 12.5 10V5.5C12.5 4 11.5 3 10 3Z" fill="white"/><path d="M4 8V10C4 13 6.5 15.5 9.5 16V18H6V19.5H14V18H10.5V16C13.5 15.5 16 13 16 10V8H14.5V10C14.5 12.2 12.5 14 10 14C7.5 14 5.5 12.2 5.5 10V8H4Z" fill="white"/></svg>';
+  }
+  return '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 17C10 17 3 12.5 3 7.5C3 5 5 3 7.5 3C8.8 3 9.8 3.8 10 5C10.2 3.8 11.2 3 12.5 3C15 3 17 5 17 7.5C17 12.5 10 17 10 17Z" fill="#FFFFFF"/></svg>';
+}
+
+function getOrCreateUserId() {
+  let uid = localStorage.getItem('gygj_user_id');
+  if (!uid) {
+    uid = 'u_' + Math.random().toString(36).slice(2, 10);
+    localStorage.setItem('gygj_user_id', uid);
+  }
+  return uid;
+}
+
+// ========== 语音输入（长按说话：原生桥接 / Web Speech / 录音上传） ==========
+let voiceMode = 'mandarin'; // 'mandarin' | 'minnan'
+let recordingVoiceMode = 'mandarin'; // 锁定当前这次录音的识别语言，避免录音期间状态变化
+let recognition = null;
+let isRecording = false;
+let minnanRecorder = null;
+let recordingType = 'rights';
+let pressStartTime = 0;
+let pressCanceled = false;
+const MIN_HOLD_MS = 800; // 少于 0.8 秒视为误触
+
+// App 内是否可用原生录音桥（MainActivity 注入）
+function hasNativeVoice() {
+  return typeof window.AndroidVoice !== 'undefined';
+}
+
+function setVoiceMode(mode) {
+  voiceMode = mode;
+  document.getElementById('mode-mandarin').classList.toggle('active', mode === 'mandarin');
+  document.getElementById('mode-minnan').classList.toggle('active', mode === 'minnan');
+  const hint = document.getElementById('voice-mode-hint');
+  if (hint) hint.textContent = mode === 'mandarin' ? '按住按钮说普通话，说完松手' : '按住按钮说闽南话，说完松手';
+}
+
+// —— 长按手势绑定 ——
+function bindVoiceHold() {
+  document.querySelectorAll('[data-voice-type], #voice-btn-rights').forEach(btn => {
+    btn.addEventListener('contextmenu', (e) => e.preventDefault());
+    btn.addEventListener('pointerdown', onVoicePressStart);
+    btn.addEventListener('pointerup', onVoicePressEnd);
+    btn.addEventListener('pointercancel', onVoicePressCancel);
+    btn.addEventListener('pointerleave', onVoicePressCancel);
+  });
+}
+
+function onVoicePressStart(e) {
+  e.preventDefault();
+  if (isRecording) return;
+  pressStartTime = Date.now();
+  pressCanceled = false;
+  recordingType = e.currentTarget.dataset.voiceType || 'rights';
+  recordingVoiceMode = voiceMode;
+  if (hasNativeVoice()) {
+    window.AndroidVoice.startRecording();
+    isRecording = true;
+    setVoiceBtnState(true);
+  } else if (recordingVoiceMode === 'mandarin') {
+    startWebSpeech(recordingType);
+  } else {
+    startMinnanRecording(recordingType);
+  }
+}
+
+function onVoicePressEnd(e) {
+  if (!isRecording) return;
+  const held = Date.now() - pressStartTime;
+  if (held < MIN_HOLD_MS) {
+    pressCanceled = true;
+    cancelVoice();
+    showVoiceHint('按的时间太短了，按住说完再松手');
+    return;
+  }
+  stopVoice(); // 正常结束 → 识别/上传在各自回调里触发
+}
+
+function onVoicePressCancel() {
+  if (!isRecording) return;
+  pressCanceled = true;
+  cancelVoice();
+  showVoiceHint('已取消，想说话再按住按钮');
+}
+
+function showVoiceHint(text) {
+  const hint = document.getElementById('voice-mode-hint');
+  if (!hint) return;
+  hint.textContent = text;
+  clearTimeout(showVoiceHint._t);
+  showVoiceHint._t = setTimeout(() => setVoiceMode(voiceMode), 2000);
+}
+
+function cancelVoice() {
+  if (hasNativeVoice()) {
+    try { window.AndroidVoice.cancelRecording(); } catch (e) {}
+  }
+  if (recognition) { try { recognition.abort(); } catch (e) {} }
+  if (minnanRecorder) { try { minnanRecorder.cancel(); } catch (e) {} }
+  isRecording = false;
+  minnanRecorder = null;
+  setVoiceBtnState(false);
+}
+
+function setVoiceBtnState(recording) {
+  document.querySelectorAll('[data-voice-type], #voice-btn-rights').forEach(btn => {
+    btn.classList.toggle('recording', recording);
+    const lbl = btn.querySelector('.voice-label');
+    if (lbl) lbl.textContent = recording ? '松开发送 · 滑出取消' : '按住说话';
+  });
+}
+
+function stopVoice() {
+  if (hasNativeVoice()) {
+    try { window.AndroidVoice.stopRecording(); } catch (e) {}
+    isRecording = false;
+    setVoiceBtnState(false);
+    return; // 结果通过 window.onNativeVoiceResult 回调
+  }
+  if (recognition) { try { recognition.stop(); } catch (e) {} }
+  if (minnanRecorder) { try { minnanRecorder.stop(); } catch (e) {} minnanRecorder = null; }
+}
+
+// —— 原生桥接回调（App 内）：录音完成 → base64 WAV ——
+window.onNativeVoiceResult = function (audioBase64) {
+  isRecording = false;
+  setVoiceBtnState(false);
+  if (pressCanceled) return;
+  uploadForAsr(audioBase64, recordingType, recordingVoiceMode);
+};
+window.onNativeVoiceError = function (msg) {
+  isRecording = false;
+  setVoiceBtnState(false);
+  showVoiceHint(msg || '录音没成功，再试一次');
+};
+
+// —— 浏览器兜底 · 普通话：Web Speech API ——
+function startWebSpeech(type) {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    showVoiceHint('当前浏览器不支持普通话识别，切到闽南话模式或直接打字');
+    return;
+  }
+  recognition = new SR();
+  recognition.lang = 'zh-CN';
+  recognition.interimResults = false;
+  recognition.continuous = true; // 按住期间持续识别
+  recognition.onstart = () => { isRecording = true; setVoiceBtnState(true); };
+  recognition.onresult = (ev) => {
+    if (pressCanceled) return;
+    const last = ev.results[ev.results.length - 1];
+    const text = last[0].transcript;
+    if (last.isFinal && text.trim()) dispatchUserMessage(type, text.trim());
+  };
+  recognition.onerror = (ev) => {
+    isRecording = false;
+    setVoiceBtnState(false);
+    if (ev.error === 'no-speech') showVoiceHint('没听到你说话，再按住试一次');
+    else if (ev.error === 'not-allowed') showVoiceHint('麦克风权限被拒了，在浏览器设置里允许一下');
+    else if (ev.error === 'network') showVoiceHint('语音服务连不上，检查下网络');
+  };
+  recognition.onend = () => { isRecording = false; setVoiceBtnState(false); };
+  recognition.start();
+}
+
+// —— 闽南话：录音 → 后端 → 腾讯云ASR ——
+function startMinnanRecording(type) {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    alert('当前环境不支持录音。');
+    return;
+  }
+  navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
+    const source = audioCtx.createMediaStreamSource(stream);
+    const processor = audioCtx.createScriptProcessor(4096, 1, 1);
+    const chunks = [];
+    processor.onaudioprocess = (e) => {
+      const input = e.inputBuffer.getChannelData(0);
+      chunks.push(new Float32Array(input));
+    };
+    source.connect(processor);
+    processor.connect(audioCtx.destination);
+    minnanRecorder = {
+      _canceled: false,
+      stop: () => {
+        try { processor.disconnect(); source.disconnect(); stream.getTracks().forEach(t => t.stop()); } catch (e) {}
+        audioCtx.close();
+        if (minnanRecorder && minnanRecorder._canceled) return;
+        // 合并 & 编码 WAV (16k 16bit mono)
+        let totalLen = 0;
+        chunks.forEach(c => totalLen += c.length);
+        const pcm = new Float32Array(totalLen);
+        let offset = 0;
+        chunks.forEach(c => { pcm.set(c, offset); offset += c.length; });
+        const wav = encodeWav(pcm, audioCtx.sampleRate || 16000);
+        const b64 = arrayBufferToBase64(wav);
+        uploadForAsr(b64, type, recordingVoiceMode);
+      },
+      cancel: () => {
+        minnanRecorder._canceled = true;
+        chunks.length = 0;
+        try { processor.disconnect(); source.disconnect(); stream.getTracks().forEach(t => t.stop()); } catch (e) {}
+        try { audioCtx.close(); } catch (e) {}
+      }
+    };
+    isRecording = true;
+    setVoiceBtnState(true);
+  }).catch(err => {
+    isRecording = false;
+    setVoiceBtnState(false);
+    showVoiceHint('麦克风权限被拒绝了，在浏览器设置里允许一下');
+  });
+}
+
+function encodeWav(samples, sampleRate) {
+  const buf = new ArrayBuffer(44 + samples.length * 2);
+  const view = new DataView(buf);
+  const writeStr = (off, s) => { for (let i = 0; i < s.length; i++) view.setUint8(off + i, s.charCodeAt(i)); };
+  writeStr(0, 'RIFF'); view.setUint32(4, 36 + samples.length * 2, true);
+  writeStr(8, 'WAVE'); writeStr(12, 'fmt ');
+  view.setUint32(16, 16, true); view.setUint16(20, 1, true); view.setUint16(22, 1, true);
+  view.setUint32(24, sampleRate, true); view.setUint32(28, sampleRate * 2, true);
+  view.setUint16(32, 2, true); view.setUint16(34, 16, true);
+  writeStr(36, 'data'); view.setUint32(40, samples.length * 2, true);
+  let off = 44;
+  for (let i = 0; i < samples.length; i++, off += 2) {
+    const s = Math.max(-1, Math.min(1, samples[i]));
+    view.setInt16(off, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+  }
+  return buf;
+}
+
+function arrayBufferToBase64(buffer) {
+  const bytes = new Uint8Array(buffer);
+  let binary = '';
+  const chunk = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunk) {
+    binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+  }
+  return btoa(binary);
+}
+
+function resizeImageFile(file, maxSide, quality) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('file_read_failed'));
+    reader.onload = () => {
+      const image = new Image();
+      image.onerror = () => reject(new Error('image_decode_failed'));
+      image.onload = () => {
+        const scale = Math.min(1, maxSide / Math.max(image.width, image.height));
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.max(1, Math.round(image.width * scale));
+        canvas.height = Math.max(1, Math.round(image.height * scale));
+        canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      image.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function addUploadedImage(chatArea, dataUrl, fileName) {
+  const row = document.createElement('div');
+  row.className = 'chat-bubble-row user';
+  row.innerHTML = `<div class="user-message rights image-message"><img src="${dataUrl}" alt="${escapeHtml(fileName)}"><span class="msg-text">已上传：${escapeHtml(fileName)}</span></div>`;
+  chatArea.appendChild(row);
+  chatArea.scrollTop = chatArea.scrollHeight;
+}
+
+async function handleImageUpload(input) {
+  const file = input.files && input.files[0];
+  input.value = '';
+  if (!file) return;
+  if (!file.type || !file.type.startsWith('image/')) {
+    alert('目前只支持上传图片');
+    return;
+  }
+  if (file.size > 10 * 1024 * 1024) {
+    alert('图片不能超过10MB，请压缩或截图后再传');
+    return;
+  }
+  const chatArea = document.getElementById('chat-rights');
+  const statusRow = document.createElement('div');
+  statusRow.className = 'chat-bubble-row';
+  statusRow.innerHTML = `<div class="bot-avatar rights">${avatarIcon('rights')}</div><div class="bot-message"><span class="msg-text">图片上传中…</span></div>`;
+  chatArea.appendChild(statusRow);
+  chatArea.scrollTop = chatArea.scrollHeight;
+  try {
+    const dataUrl = await resizeImageFile(file, 1600, 0.82);
+    const base = typeof ensureApiBase === 'function' ? await ensureApiBase() : API_BASE;
+    if (!base) throw new Error('api_unavailable');
+    const resp = await fetch(base + '/api/upload-image', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        image_base64: dataUrl,
+        user_id: getOrCreateUserId(),
+        note: '聊天页上传的工资条、合同或其他证据'
+      })
+    });
+    const result = await resp.json();
+    if (!resp.ok || !result.ok) throw new Error(result.reply || 'upload_failed');
+    statusRow.remove();
+    addUploadedImage(chatArea, dataUrl, file.name);
+    appendBotReply(chatArea, result.reply || '图片已经帮你存好了，维权时记得把原件也留好。', null, 'rights');
+  } catch (err) {
+    statusRow.remove();
+    appendBotReply(chatArea, err.message === 'api_unavailable' ? '上传服务暂时没接通，请稍后再试。' : '图片上传失败，请换一张清晰图片再试。', null, 'rights');
+  }
+}
+
+function uploadAvatar(input) {
+  const file = input.files && input.files[0];
+  input.value = '';
+  if (!file) return;
+  if (!file.type || !file.type.startsWith('image/')) {
+    alert('头像必须是图片');
+    return;
+  }
+  if (file.size > 8 * 1024 * 1024) {
+    alert('头像图片不能超过8MB');
+    return;
+  }
+  resizeImageFile(file, 512, 0.86).then(dataUrl => {
+    try {
+      localStorage.setItem('gygj_avatar', dataUrl);
+      renderUserAvatar();
+    } catch (_) {
+      alert('头像保存失败，请换一张小一点的图片');
+    }
+  }).catch(() => alert('头像读取失败，请换一张图片再试'));
+}
+
+function renderUserAvatar() {
+  const avatar = document.getElementById('profile-avatar');
+  if (!avatar) return;
+  const dataUrl = localStorage.getItem('gygj_avatar');
+  if (dataUrl) {
+    avatar.classList.add('has-image');
+    avatar.innerHTML = `<img src="${dataUrl}" alt="我的头像"><span class="avatar-upload-badge">+</span>`;
+  } else {
+    avatar.classList.remove('has-image');
+    avatar.innerHTML = '<svg width="36" height="36" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="12" r="6" stroke="#FFFFFF" stroke-width="2" fill="none"/><path d="M6 31C6 24 11 21 18 21C25 21 30 24 30 31" stroke="#FFFFFF" stroke-width="2" fill="none"/></svg>';
+  }
+}
+
+function uploadForAsr(audioBase64, type, lang) {
+  const selectedLang = lang === 'minnan' ? 'minnan' : 'mandarin';
+  const chatArea = document.getElementById('chat-' + type);
+  const statusRow = document.createElement('div');
+  statusRow.className = 'chat-bubble-row';
+  const tipText = selectedLang === 'minnan' ? '闽南话识别中…' : '识别中…';
+  statusRow.innerHTML = `<div class="bot-avatar rights">${avatarIcon('rights')}</div><div class="bot-message"><span class="msg-text"><span class="typing-dots"><i></i><i></i><i></i></span> ${tipText}</span></div>`;
+  chatArea.appendChild(statusRow);
+  chatArea.scrollTop = chatArea.scrollHeight;
+  const endpoint = selectedLang === 'minnan' ? '/api/asr/minnan' : '/api/asr';
+  fetch(API_BASE + endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ audio_base64: audioBase64, format: 'wav', lang: selectedLang })
+  }).then(r => {
+    if (!r.ok) throw new Error('asr_unavailable');
+    return r.json();
+  }).then(data => {
+    statusRow.remove();
+    if (data.text) {
+      dispatchUserMessage(type, data.text);
+    } else {
+      appendBotReply(chatArea, data.error || '没识别出来，麻烦再按住说一遍。', null, type);
+    }
+  }).catch((err) => {
+    statusRow.remove();
+    const message = selectedLang === 'minnan' && err && err.message === 'asr_unavailable'
+      ? '闽南话识别服务还没更新，请先重启后端服务再试。'
+      : '识别服务连不上，检查下网络。';
+    appendBotReply(chatArea, message, null, type);
+  });
+}
+
+// ========== 我的工单/上工记录 ==========
+function getWorkLogs() { return JSON.parse(localStorage.getItem('gygj_worklogs') || '[]'); }
+function saveWorkLogs(logs) { localStorage.setItem('gygj_worklogs', JSON.stringify(logs)); }
+
+function addWorkLog() {
+  const date = document.getElementById('wl-date').value;
+  const place = document.getElementById('wl-place').value.trim();
+  const hours = parseFloat(document.getElementById('wl-hours').value);
+  const wage = parseFloat(document.getElementById('wl-wage').value);
+  if (!date || !place || !hours) {
+    alert('日期、地点、工时必填');
+    return;
+  }
+  const logs = getWorkLogs();
+  logs.unshift({ date, place, hours, wage: wage || 0, ts: Date.now() });
+  saveWorkLogs(logs);
+  document.getElementById('wl-place').value = '';
+  document.getElementById('wl-hours').value = '';
+  document.getElementById('wl-wage').value = '';
+  renderWorkLogs();
+}
+
+function deleteWorkLog(ts) {
+  const logs = getWorkLogs().filter(l => l.ts !== ts);
+  saveWorkLogs(logs);
+  renderWorkLogs();
+}
+
+function renderWorkLogs() {
+  const logs = getWorkLogs();
+  const list = document.getElementById('worklog-list');
+  const totalDays = new Set(logs.map(l => l.date)).size;
+  const totalHours = logs.reduce((s, l) => s + (l.hours || 0), 0);
+  const totalWage = logs.reduce((s, l) => s + (l.wage || 0), 0);
+  document.getElementById('wl-total-days').textContent = totalDays;
+  document.getElementById('wl-total-hours').textContent = totalHours.toFixed(1);
+  document.getElementById('wl-total-wage').textContent = '¥' + totalWage;
+  if (!list) return;
+  if (!logs.length) {
+    list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-secondary);font-size:13px;">还没记录，干完活记一笔，防赖账</div>';
+    return;
+  }
+  list.innerHTML = logs.map(l => `
+    <div class="wl-entry">
+      <div class="wl-entry-left">
+        <span class="wl-entry-date">${l.date}</span>
+        <span class="wl-entry-detail">${escapeHtml(l.place)} · ${l.hours}小时${l.wage ? '' : ' · 工资没填'}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <span class="wl-entry-wage">${l.wage ? '¥' + l.wage : ''}</span>
+        <button class="wl-delete" onclick="deleteWorkLog(${l.ts})">删除</button>
+      </div>
+    </div>`).join('');
+}
+
+function uploadContract(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    // 压缩到最大 800px 宽，控制 localStorage 体积
+    const img = new Image();
+    img.onload = () => {
+      const scale = Math.min(1, 800 / img.width);
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+      try {
+        localStorage.setItem('gygj_contract', dataUrl);
+        renderContract();
+        alert('合同照片已存好，生成证据截图时会自动带上');
+      } catch (err) {
+        alert('图片太大存不下，拍小一点再试');
+      }
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function renderContract() {
+  const dataUrl = localStorage.getItem('gygj_contract');
+  const wrap = document.getElementById('contract-img-wrap');
+  const preview = document.getElementById('contract-preview');
+  const label = document.getElementById('contract-label');
+  if (dataUrl) {
+    document.getElementById('contract-img').src = dataUrl;
+    wrap.style.display = 'block';
+    preview.style.display = 'none';
+  } else {
+    wrap.style.display = 'none';
+    preview.style.display = 'flex';
+    if (label) label.textContent = '拍合同照片存这儿（当证据）';
+  }
+}
+
+function exportEvidence() {
+  const logs = getWorkLogs();
+  if (!logs.length) {
+    alert('还没有上工记录，先记几笔');
+    return;
+  }
+  const totalDays = new Set(logs.map(l => l.date)).size;
+  const totalHours = logs.reduce((s, l) => s + (l.hours || 0), 0);
+  const totalWage = logs.reduce((s, l) => s + (l.wage || 0), 0);
+  const byPlace = {};
+  logs.forEach(l => { byPlace[l.place] = (byPlace[l.place] || 0) + l.hours; });
+  const lines = Object.entries(byPlace).map(([p, h]) => `  ${p}：${h.toFixed(1)}小时`).join('\n');
+
+  // 画到 canvas 生成证据图
+  const w = 720, pad = 40;
+  const rowH = 34;
+  const h = pad * 2 + 150 + rowH * Math.min(logs.length, 30) + 80;
+  const canvas = document.createElement('canvas');
+  canvas.width = w; canvas.height = h;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, w, h);
+  ctx.fillStyle = '#F26430'; ctx.fillRect(0, 0, w, 8);
+  ctx.fillStyle = '#37352F'; ctx.font = 'bold 30px sans-serif';
+  ctx.fillText('上工记录凭证', pad, 70);
+  ctx.font = '16px sans-serif'; ctx.fillStyle = '#73726E';
+  ctx.fillText('生成时间：' + new Date().toLocaleString('zh-CN'), pad, 100);
+  ctx.fillStyle = '#37352F'; ctx.font = 'bold 20px sans-serif';
+  ctx.fillText(`共上工 ${totalDays} 天 · 总工时 ${totalHours.toFixed(1)} 小时 · 约定工资合计 ¥${totalWage}`, pad, 140);
+  ctx.font = '15px sans-serif'; ctx.fillStyle = '#73726E';
+  let y = 180;
+  logs.slice(0, 30).forEach(l => {
+    ctx.fillStyle = '#37352F';
+    ctx.fillText(`${l.date}  ${l.place}  ${l.hours}小时${l.wage ? '  ¥' + l.wage : ''}`, pad, y);
+    y += rowH;
+  });
+  ctx.fillStyle = '#73726E'; ctx.font = '13px sans-serif';
+  ctx.fillText('本记录由工友小宝自动生成，可作为劳动报酬结算参考证据。', pad, h - 40);
+
+  // 合同图一起带上
+  const dataUrl = canvas.toDataURL('image/png');
+  const win = window.open('', '_blank');
+  if (win) {
+    win.document.write(`<html><head><title>上工证据</title><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#E0E0E0;">
+      <img src="${dataUrl}" style="width:100%;display:block;">
+      ${localStorage.getItem('gygj_contract') ? `<img src="${localStorage.getItem('gygj_contract')}" style="width:100%;display:block;margin-top:10px;">` : ''}
+      <p style="text-align:center;padding:12px;color:#666;font-size:13px;">长按或截图保存，这就是证据</p></body></html>`);
+    win.document.close();
+  } else {
+    alert('弹窗被拦了，允许一下弹窗就能看到证据图');
+  }
+}
+
+// ========== 工友之家社区 ==========
+const COMMUNITY_SEED = [
+  { id: 's1', user: '老李', role: '木工', tag: '日常', content: '今天3号楼封顶了，中午食堂加了鸡腿，爽！', time: '2小时前', likes: 23, liked: false, comments: [{ user: '钢筋王', text: '恭喜恭喜，晚上整两口？' }] },
+  { id: 's2', user: '四川小陈', role: '电工', tag: '求助', content: '有工友知道工资卡被冻结了咋回事不？项目上发的卡，说两个月后才能用。', time: '5小时前', likes: 8, liked: false, comments: [{ user: '老李', text: '正常的，新卡激活后有的要等一阵，具体问发卡的银行' }] },
+  { id: 's3', user: '张姐', role: '杂工', tag: '晒工资', content: '这个月干了26天，到账9100，一分不少。记着每天在小宝上打卡记工时，真的有用！', time: '昨天', likes: 56, liked: false, comments: [] }
+];
+
+function getPosts() {
+  const saved = localStorage.getItem('gygj_community');
+  if (saved) return JSON.parse(saved);
+  return COMMUNITY_SEED.map(p => ({ ...p }));
+}
+function savePosts(posts) { localStorage.setItem('gygj_community', JSON.stringify(posts)); }
+
+function selectCommunityTag(el) {
+  el.parentElement.querySelectorAll('.community-tag').forEach(t => t.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function postCommunity() {
+  const input = document.getElementById('community-input');
+  const text = input.value.trim();
+  if (!text) { alert('说两句再发'); return; }
+  const tagEl = document.querySelector('.community-tag-row .community-tag.selected');
+  const tag = tagEl ? tagEl.textContent : '日常';
+  const posts = getPosts();
+  posts.unshift({ id: 'p' + Date.now(), user: '我', role: '工友', tag, content: text, time: '刚刚', likes: 0, liked: false, comments: [] });
+  savePosts(posts);
+  input.value = '';
+  renderCommunity();
+}
+
+function toggleLike(id) {
+  const posts = getPosts();
+  const p = posts.find(x => x.id === id);
+  if (p) { p.liked = !p.liked; p.likes += p.liked ? 1 : -1; savePosts(posts); renderCommunity(); }
+}
+
+function addComment(id) {
+  const input = document.getElementById('comment-' + id);
+  const text = input.value.trim();
+  if (!text) return;
+  const posts = getPosts();
+  const p = posts.find(x => x.id === id);
+  if (p) { p.comments.push({ user: '我', text }); savePosts(posts); renderCommunity(); }
+}
+
+const AVATAR_COLORS = ['#F26430', '#D4A574', '#0F9D58', '#5B8DEF', '#9C6ADE', '#EB5757'];
+function renderCommunity() {
+  const feed = document.getElementById('community-feed');
+  if (!feed) return;
+  const posts = getPosts();
+  feed.innerHTML = posts.map((p, i) => {
+    const color = AVATAR_COLORS[i % AVATAR_COLORS.length];
+    return `
+    <div class="post-card">
+      <div class="post-header">
+        <div class="post-avatar" style="background:${color}">${p.user[0]}</div>
+        <div class="post-user-info">
+          <span class="post-user">${escapeHtml(p.user)} · ${escapeHtml(p.role)}</span>
+          <span class="post-time">${escapeHtml(p.time)}</span>
+        </div>
+        <span class="post-tag">${escapeHtml(p.tag)}</span>
+      </div>
+      <div class="post-content">${escapeHtml(p.content)}</div>
+      <div class="post-actions">
+        <span class="post-action ${p.liked ? 'liked' : ''}" onclick="toggleLike('${p.id}')">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="${p.liked ? '#F26430' : 'none'}"><path d="M8 14C8 14 2 10 2 5.8C2 3.6 3.6 2 5.5 2C6.6 2 7.6 2.6 8 3.4C8.4 2.6 9.4 2 10.5 2C12.4 2 14 3.6 14 5.8C14 10 8 14 8 14Z" stroke="${p.liked ? '#F26430' : '#73726E'}" stroke-width="1.3"/></svg>
+          ${p.likes}
+        </span>
+        <span class="post-action" onclick="document.getElementById('comment-${p.id}').focus()">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M14 8C14 11.3 11.3 14 8 14C6.9 14 5.9 13.7 5 13.2L2 14L2.8 11C2.3 10.1 2 9.1 2 8C2 4.7 4.7 2 8 2C11.3 2 14 4.7 14 8Z" stroke="#73726E" stroke-width="1.3"/></svg>
+          ${p.comments.length}
+        </span>
+      </div>
+      ${p.comments.length ? `<div class="post-comments">${p.comments.map(c => `<div class="post-comment"><b>${escapeHtml(c.user)}：</b>${escapeHtml(c.text)}</div>`).join('')}</div>` : ''}
+      <div class="comment-input-row">
+        <input class="comment-input" id="comment-${p.id}" placeholder="说一句…" onkeypress="if(event.key==='Enter')addComment('${p.id}')">
+        <button class="comment-send" onclick="addComment('${p.id}')">发送</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ========== 食堂反馈 & 报修 ==========
+function submitCanteen() {
+  const desc = document.getElementById('canteen-desc').value.trim();
+  if (!desc) { alert('说说具体啥问题'); return; }
+  const typeEl = document.querySelector('#page-canteen .chip.selected');
+  const type = typeEl ? typeEl.textContent : '其他';
+  const list = JSON.parse(localStorage.getItem('gygj_canteen') || '[]');
+  list.unshift({ type, desc, time: new Date().toLocaleString('zh-CN'), status: '已转后勤' });
+  localStorage.setItem('gygj_canteen', JSON.stringify(list));
+  document.getElementById('canteen-desc').value = '';
+  alert('反馈已提交，后勤张姐会在24小时内回复');
+  renderCanteenHistory();
+}
+
+function renderCanteenHistory() {
+  const el = document.getElementById('canteen-history');
+  if (!el) return;
+  const list = JSON.parse(localStorage.getItem('gygj_canteen') || '[]');
+  if (!list.length) { el.innerHTML = ''; return; }
+  el.innerHTML = '<div class="section-label" style="margin:20px 0 10px;">我的反馈</div>' + list.map(f => `
+    <div class="wl-entry">
+      <div class="wl-entry-left">
+        <span class="wl-entry-date">[${escapeHtml(f.type)}] ${escapeHtml(f.desc)}</span>
+        <span class="wl-entry-detail">${escapeHtml(f.time)} · ${escapeHtml(f.status)}</span>
+      </div>
+    </div>`).join('');
+}
+
+function submitRepair() {
+  const descEl = document.querySelector('#page-repair .desc-box');
+  const desc = descEl ? descEl.value.trim() : '';
+  if (!desc) { alert('说说啥问题'); return; }
+  const typeEl = document.querySelector('#page-repair .chip.selected');
+  const type = typeEl ? typeEl.textContent : '其他';
+  const list = JSON.parse(localStorage.getItem('gygj_repairs') || '[]');
+  list.unshift({ type, desc, time: new Date().toLocaleString('zh-CN'), status: '待处理' });
+  localStorage.setItem('gygj_repairs', JSON.stringify(list));
+  descEl.value = '';
+  alert('报修已提交，后勤会尽快来修');
+}
+
+// ========== 电话簿编辑 ==========
+function initPhones() {
+  const foreman = localStorage.getItem('gygj_phone_foreman');
+  const manager = localStorage.getItem('gygj_phone_manager');
+  const fEl = document.getElementById('phone-foreman');
+  const mEl = document.getElementById('phone-manager');
+  if (fEl && foreman) fEl.href = 'tel:' + foreman;
+  if (mEl && manager) mEl.href = 'tel:' + manager;
+  if (fEl) fEl.querySelector('.phone-desc').textContent = foreman ? foreman + '（已存）' : '点右上角"编辑"存他的号码';
+  if (mEl) mEl.querySelector('.phone-desc').textContent = manager ? manager + '（已存）' : '点右上角"编辑"存他的号码';
+}
+
+// ========== 初始化 ==========
+document.addEventListener('DOMContentLoaded', () => {
+  const today = new Date();
+  const dateInput = document.getElementById('wl-date');
+  if (dateInput) dateInput.value = today.toISOString().slice(0, 10);
+  renderWorkLogs();
+  renderContract();
+  renderCommunity();
+  renderCanteenHistory();
+  initPhones();
+  renderUserAvatar();
+  bindVoiceHold(); // 语音按钮长按手势
+  // 安全教育视频源（指向后端静态目录）
+  const vh = document.getElementById('video-height');
+  if (vh) vh.src = API_BASE + '/videos/safety_height.mp4';
+  // 报修页提交按钮接管
+  const repairBtn = document.querySelector('#page-repair .submit-btn');
+  if (repairBtn) repairBtn.setAttribute('onclick', 'submitRepair()');
+});
+
+// ========== Utility ==========
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+# Local secrets and environment files
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Android and Gradle local state
+android-sdk/
+gradle-*/
+android-project/.gradle/
+android-project/local.properties
+android-project/**/build/
+*.hprof
+
+# Generated packages and archives
+*.apk
+*.aab
+*.zip
+*.docx
+*.pdf
+output/
+
+# Temporary document and agent workspaces
+.docx-read/
+.workbuddy/
+.tmp-*
+优化提取.txt
+*.pyc
+__pycache__/
+
+# Editor and OS files
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# Test output
+test-results/
+playwright-report/
